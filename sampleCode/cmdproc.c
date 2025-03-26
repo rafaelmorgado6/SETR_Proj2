@@ -14,6 +14,16 @@ static unsigned char rxBufLen = 0;
 static unsigned char UARTTxBuffer[UART_TX_SIZE];
 static unsigned char txBufLen = 0; 
 
+static unsigned int possTempArray[] = {0, 10, -10, 30, -25, -50, 60};
+static unsigned int currentTempIndex = 0;
+
+static unsigned int possHumidArray[] = {0, 10, -10, 30, -25, -50, 60};
+static unsigned int currentHumidIndex = 0;
+
+static unsigned int possCO2Array[] = {0, 10, -10, 30, -25, -50, 60};
+static unsigned int currentCO2Index = 0;
+
+
  
 /* Function implementation */
 
@@ -63,16 +73,36 @@ int cmdProcessor(void)
 					return -4;
 				}
 			
-				/* Command is (is it? ... ) valid. Produce answer and terminate */ 
-				txChar('#');
-				txChar('p'); /* p is the reply to P 							*/	
-				txChar('t'); /* t indicate that it is a temperature 			*/
-				txChar('+'); /* This is the sensor reading. You should call a 	*/
-				txChar('2'); /*   function that emulates the reading of a 		*/
-				txChar('1'); /*   sensor value 	*/
+				unsigned char txBuffer[32];
+				unsigned int txIndex = 0;
+
+				txBuffer[txIndex++] = "#";
+				txBuffer[txIndex++] = "p";
+
+				if (sid == 't') {
+					/* t indicate that it is a temperature  */
+					txBuffer[txIndex++] = "t";
+					readTempSensor();
+
+					if (currentTemp >= 0) {
+						txBuffer[txIndex++] = "+";
+					}
+					else {
+						txBuffer[txIndex++] = "-";
+					}
+
+					transmitInteger(currentTemp);
+
+					int checksum = calcChecksum();
+
+				}
+
+
+
 				txChar('1'); /* Checksum is 114 decimal in this case		*/
 				txChar('1'); /*   You should call a funcion that computes 	*/
-				txChar('4'); /*   the checksum for any command 				*/  
+				txChar('4'); /*   the checksum for any command 				*/ 
+
 				txChar('!');
 				
 				/* Here you should remove the characters that are part of the 		*/
@@ -95,6 +125,38 @@ int cmdProcessor(void)
 	return -4;
 
 }
+
+
+
+int transmitInteger(int num, unsigned char arr[], int index) {
+	int readingSize = (int) ((ceil(log10(input)) + 1) * sizeof(char))
+				
+	char readAsString[readingSize];
+	
+	itoa(input, readAsString, 10);
+
+	for (int i = 0; i < readingSize; i++) {
+		arr[index + i] = readAsString[i];
+	}
+
+	index += readingSize;
+
+	return 1;
+}
+
+
+
+int readTempSensor() {
+	if (++currentTempIndex >= sizeof(currentTemp) / sizeof(int)) {
+		currentTempIndex = 0;
+	}
+
+	return currentTemp[currentTempIndex];
+}
+
+
+
+
 
 /* 
  * calcChecksum
@@ -170,5 +232,3 @@ void getTxBuffer(unsigned char * buf, int * len)
 	}		
 	return;
 }
-
-
