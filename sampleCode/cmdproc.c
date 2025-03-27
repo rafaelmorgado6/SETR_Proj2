@@ -1,9 +1,6 @@
-/* ****************************** */
-/* See cmdProc.h for indications  */
-/* ****************************** */
 #include <stdio.h>
 #include <string.h>
-
+#include <math.h>
 #include "cmdproc.h"
 
 /* Internal variables */
@@ -23,8 +20,8 @@ static unsigned int currentHumidIndex = 0;
 static unsigned int possCO2Array[] = {0, 10, -10, 30, -25, -50, 60};
 static unsigned int currentCO2Index = 0;
 
+static int currentTemp = 0;  // Variável global para armazenar a temperatura atual
 
- 
 /* Function implementation */
 
 /* 
@@ -32,203 +29,152 @@ static unsigned int currentCO2Index = 0;
  */ 
 int cmdProcessor(void)
 {
-	int i;
-	unsigned char sid;
-		
-	/* Detect empty cmd string */
-	if(rxBufLen == 0)
-		return -1; 
-	
-	/* Find index of SOF */
-	for(i=0; i < rxBufLen; i++) {
-		if(UARTRxBuffer[i] == SOF_SYM) {
-			break;
-		}
-	}
-	
-	/* If a SOF was found look for commands */
-	if(i < rxBufLen) {
-		
-		switch(UARTRxBuffer[i+1]) { 
-			
-			case 'P':		
-				/* Command "P" detected.							*/
-				/* Follows one DATA byte that specifies the sensor	*/ 
-				/* to read. I assume 't','h','c' for temp., humid. 	*/
-				/* and CO2, resp.									*/   
-		
-				/* Check sensor type */
-				sid = UARTRxBuffer[i+2];
-				if(sid != 't' && sid != 'h' && sid != 'c') {
-					return -2;
-				}
-				
-				/* Check checksum */
-				if(!(calcChecksum(&(UARTRxBuffer[i+1]),2))) {
-					return -3;
-				}
-				
-				/* Check EOF */
-				if(UARTRxBuffer[i+6] != EOF_SYM) {
-					return -4;
-				}
-			
-				unsigned char txBuffer[32];
-				unsigned int txIndex = 0;
+    int i;
+    unsigned char sid;
+    
+    /* Detect empty cmd string */
+    if(rxBufLen == 0)
+        return -1;
 
-				txBuffer[txIndex++] = "#";
-				txBuffer[txIndex++] = "p";
+    /* Find index of SOF */
+    for(i = 0; i < rxBufLen; i++) {
+        if(UARTRxBuffer[i] == SOF_SYM) {
+            break;
+        }
+    }
 
-				if (sid == 't') {
-					/* t indicate that it is a temperature  */
-					txBuffer[txIndex++] = "t";
-					readTempSensor();
+    /* If a SOF was found, look for commands */
+    if(i < rxBufLen) {
+        
+        switch(UARTRxBuffer[i+1]) { 
+            
+            case 'P':  
+                sid = UARTRxBuffer[i+2];
+                if(sid != 't' && sid != 'h' && sid != 'c') {
+                    return -2;
+                }
 
-					if (currentTemp >= 0) {
-						txBuffer[txIndex++] = "+";
-					}
-					else {
-						txBuffer[txIndex++] = "-";
-					}
+                /* Check checksum */
+                if(!(calcChecksum(&(UARTRxBuffer[i+1]), 2))) {
+                    return -3;
+                }
+                
+                if(UARTRxBuffer[i+6] != EOF_SYM) {
+                    return -4;
+                }
 
-					transmitInteger(currentTemp);
+                unsigned char txBuffer[32];
+                unsigned int txIndex = 0;
 
-					int checksum = calcChecksum();
+                txBuffer[txIndex++] = '#';
+                txBuffer[txIndex++] = 'p';
+                if (sid == 't') {
+                    txBuffer[txIndex++] = 't';
+                    readTempSensor();
 
-				}
+                    if (currentTemp >= 0) {
+                        txBuffer[txIndex++] = '+';
+                    } else {
+                        txBuffer[txIndex++] = '-';
+                    }
 
+                    transmitInteger(currentTemp, txBuffer, txIndex);
 
+                    int checksum = calcChecksum(txBuffer, txIndex);
+                    char checksumStr[4];
+                    snprintf(checksumStr, sizeof(checksumStr), "%03d", checksum);
 
-				txChar('1'); /* Checksum is 114 decimal in this case		*/
-				txChar('1'); /*   You should call a funcion that computes 	*/
-				txChar('4'); /*   the checksum for any command 				*/ 
+                    txBuffer[txIndex++] = checksumStr[0];
+                    txBuffer[txIndex++] = checksumStr[1];
+                    txBuffer[txIndex++] = checksumStr[2];
+                }
 
-				txChar('!');
-				
-				/* Here you should remove the characters that are part of the 		*/
-				/* command from the RX buffer. I'm just resetting it, which is not 	*/
-				/* a good solution, as a new command could be in progress and		*/
-				/* resetting  will generate errors									*/
-				rxBufLen = 0;	
-				
-				return 0;
-								
-			default:
-				/* If code reaches this place, the command is not recognized */
-				return -2;				
-		}
-		
-		
-	}
-	
-	/* Cmd string not null and SOF not found */
-	return -4;
+                txBuffer[txIndex++] = '!';
 
+                for(int j = 0; j < txIndex; j++) {
+                    txChar(txBuffer[j]);
+                }
+
+                rxBufLen = 0;
+                return 0;
+
+            default:
+                return -2;
+        }
+    }
+
+    return -4;
 }
-
-
 
 int transmitInteger(int num, unsigned char arr[], int index) {
-	int readingSize = (int) ((ceil(log10(input)) + 1) * sizeof(char))
-				
-	char readAsString[readingSize];
-	
-	itoa(input, readAsString, 10);
-
-	for (int i = 0; i < readingSize; i++) {
-		arr[index + i] = readAsString[i];
-	}
-
-	index += readingSize;
-
-	return 1;
+    sprintf((char *)arr + index, "%d", num);
+    return 1;
 }
-
-
 
 int readTempSensor() {
-	if (++currentTempIndex >= sizeof(currentTemp) / sizeof(int)) {
-		currentTempIndex = 0;
-	}
-
-	return currentTemp[currentTempIndex];
+    if (++currentTempIndex >= sizeof(possTempArray) / sizeof(int)) {
+        currentTempIndex = 0;
+    }
+    currentTemp = possTempArray[currentTempIndex];
+    return currentTemp;
 }
 
-
-
-
-
-/* 
- * calcChecksum
- */ 
 int calcChecksum(unsigned char * buf, int nbytes) {
-	/* Here you are supposed to compute the modulo 256 checksum */
-	/* of the first n bytes of buf. Then you should convert the */
-	/* checksum to ascii (3 digitas/chars) and compare each one */
-	/* of these digits/characters to the ones in the RxBuffer,	*/
-	/* positions nbytes, nbytes + 1 and nbytes +2. 				*/
-	
-	/* That is your work to do. In this example I just assume 	*/
-	/* that the checksum is always OK.							*/	
-	return 1;		
+    unsigned int checksum = 0;
+
+    for(int i = 0; i < nbytes; i++){
+        checksum += buf[i];
+    }
+
+    checksum = checksum % 256;
+
+    unsigned char checksumStr[4];
+    snprintf((char *)checksumStr, sizeof(checksumStr), "%03u", checksum);
+
+    if(buf[nbytes] == checksumStr[0] && buf[nbytes+1] == checksumStr[1] && buf[nbytes+2] == checksumStr[2]){
+        return 1;  // Checksum válida
+    }
+
+    return 0;  // Checksum inválida       
 }
 
-/*
- * rxChar
- */
 int rxChar(unsigned char car)
 {
-	/* If rxbuff not full add char to it */
-	if (rxBufLen < UART_RX_SIZE) {
-		UARTRxBuffer[rxBufLen] = car;
-		rxBufLen += 1;
-		return 0;		
-	}	
-	/* If cmd string full return error */
-	return -1;
+    if (rxBufLen < UART_RX_SIZE) {
+        UARTRxBuffer[rxBufLen] = car;
+        rxBufLen += 1;
+        return 0;        
+    }    
+    return -1;
 }
 
-/*
- * txChar
- */
 int txChar(unsigned char car)
 {
-	/* If rxbuff not full add char to it */
-	if (txBufLen < UART_TX_SIZE) {
-		UARTTxBuffer[txBufLen] = car;
-		txBufLen += 1;
-		return 0;		
-	}	
-	/* If cmd string full return error */
-	return -1;
+    if (txBufLen < UART_TX_SIZE) {
+        UARTTxBuffer[txBufLen] = car;
+        txBufLen += 1;
+        return 0;        
+    }    
+    return -1;
 }
 
-/*
- * resetRxBuffer
- */
 void resetRxBuffer(void)
 {
-	rxBufLen = 0;		
-	return;
+    rxBufLen = 0;        
+    return;
 }
 
-/*
- * resetTxBuffer
- */
 void resetTxBuffer(void)
 {
-	txBufLen = 0;		
-	return;
+    txBufLen = 0;        
+    return;
 }
 
-/*
- * getTxBuffer
- */
 void getTxBuffer(unsigned char * buf, int * len)
 {
-	*len = txBufLen;
-	if(txBufLen > 0) {
-		memcpy(buf,UARTTxBuffer,*len);
-	}		
-	return;
+    *len = txBufLen;
+    if(txBufLen > 0) {
+        memcpy(buf,UARTTxBuffer,*len);
+    }        
+    return;
 }
