@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>  
+#include <time.h>    
 #include "cmdproc.h"
 
 /* Internal variables */
@@ -50,50 +52,68 @@ int cmdProcessor(void)
             
             case 'P':  
                 sid = UARTRxBuffer[i+2];
+
                 if(sid != 't' && sid != 'h' && sid != 'c') {
                     return -2;
                 }
 
-                /* Check checksum */
+                // Checksum de entrada: apenas sobre CMD ('P') + DATA ('t')
                 if(!(calcChecksum(&(UARTRxBuffer[i+1]), 2))) {
                     return -3;
                 }
-                
+
                 if(UARTRxBuffer[i+6] != EOF_SYM) {
                     return -4;
                 }
 
-                unsigned char txBuffer[32];
-                unsigned int txIndex = 0;
-
-                txBuffer[txIndex++] = '#';
-                txBuffer[txIndex++] = 'p';
+                // Simular leitura de sensor
+                int sensorValue = 0;
                 if (sid == 't') {
-                    txBuffer[txIndex++] = 't';
-                    readTempSensor();
-
-                    if (currentTemp >= 0) {
-                        txBuffer[txIndex++] = '+';
-                    } else {
-                        txBuffer[txIndex++] = '-';
-                    }
-
-                    transmitInteger(currentTemp, txBuffer, txIndex);
-
-                    int checksum = calcChecksum(txBuffer, txIndex);
-                    char checksumStr[4];
-                    snprintf(checksumStr, sizeof(checksumStr), "%03d", checksum);
-
-                    txBuffer[txIndex++] = checksumStr[0];
-                    txBuffer[txIndex++] = checksumStr[1];
-                    txBuffer[txIndex++] = checksumStr[2];
+                    sensorValue = readTempSensor();
                 }
 
-                txBuffer[txIndex++] = '!';
 
-                for(int j = 0; j < txIndex; j++) {
-                    txChar(txBuffer[j]);
+                txChar('#');
+                txChar('p');
+                txChar('t');
+
+                if (sensorValue >= 0) {
+                    txChar('+');
+                } else {
+                    txChar('-');
+                    sensorValue = -sensorValue;
                 }
+
+                char sensorStr[12];
+                sprintf(sensorStr, "%d", sensorValue);
+                for (int k = 0; sensorStr[k] != '\0'; k++) {
+                    txChar(sensorStr[k]);
+                }
+
+                unsigned char checksumBuffer[20];
+                int chksumIdx = 0;
+                checksumBuffer[chksumIdx++] = 'p';
+                checksumBuffer[chksumIdx++] = sid;
+                checksumBuffer[chksumIdx++] = (sensorValue >= 0) ? '+' : '-';
+
+                for (int k = 0; sensorStr[k] != '\0'; k++) {
+                    checksumBuffer[chksumIdx++] = sensorStr[k];
+                }
+
+                int checksum = 0;
+                for (int k = 0; k < chksumIdx; k++) {
+                    checksum += checksumBuffer[k];
+                }
+                checksum = checksum % 256;
+
+                char checksumStr[5];
+                snprintf(checksumStr, sizeof(checksumStr), "%03d", checksum);
+
+                txChar(checksumStr[0]);
+                txChar(checksumStr[1]);
+                txChar(checksumStr[2]);
+
+                txChar('!');
 
                 rxBufLen = 0;
                 return 0;
@@ -106,10 +126,18 @@ int cmdProcessor(void)
     return -4;
 }
 
-int transmitInteger(int num, unsigned char arr[], int index) {
-    sprintf((char *)arr + index, "%d", num);
-    return 1;
+int transmitInteger(int value, unsigned char *buffer, int *index) {
+    char tempStr[10];
+    sprintf(tempStr, "%d", value);
+
+    for (int i = 0; tempStr[i] != '\0'; i++) {
+        buffer[*index] = tempStr[i];
+        (*index)++;
+    }
+
+    return 0;
 }
+
 
 int readTempSensor() {
     if (++currentTempIndex >= sizeof(possTempArray) / sizeof(int)) {
