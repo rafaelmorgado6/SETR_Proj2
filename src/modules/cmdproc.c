@@ -16,23 +16,28 @@ static unsigned char txBufLen = 0;
 static unsigned int possTempArray[] = {0, 10, -10, 30, -25, -50, 60};
 static unsigned int currentTempIndex = 0;
 
-static unsigned int possHumidArray[] = {0, 10, -10, 30, -25, -50, 60};
+static unsigned int possHumidArray[] = {0, 10, 20, 40, 60, 80, 100};
 static unsigned int currentHumidIndex = 0;
 
-static unsigned int possCO2Array[] = {0, 10, -10, 30, -25, -50, 60};
+static unsigned int possCO2Array[] = {0, 400, 1000, 2500, 5000, 10000, 20000};
 static unsigned int currentCO2Index = 0;
-
-static int currentTemp = 0;  // Variável global para armazenar a temperatura atual
 
 /* Function implementation */
 
 /* 
  * cmdProcessor
  */ 
-int cmdProcessor(void)
-{
+int cmdProcessor(void) {
     int i;
     unsigned char sid;
+
+
+    char sensorStr[12];
+    unsigned char checksumBuffer[32];
+    int chksumIdx = 0;
+    int checksum = 0;
+    char checksumStr[5];
+
     
     /* Detect empty cmd string */
     if(rxBufLen == 0)
@@ -50,6 +55,71 @@ int cmdProcessor(void)
         
         switch(UARTRxBuffer[i+1]) { 
             
+            //  Responds as #at+22h020c01000CKS!
+            case 'A':
+
+                // Checksum de entrada: apenas sobre CMD ('P') + DATA ('t')
+                if(!(calcChecksum(&(UARTRxBuffer[i+1]), 2))) {
+                    return -3;
+                }
+
+                if(UARTRxBuffer[i+6] != EOF_SYM) {
+                    return -4;
+                }
+
+                checksumBuffer[chksumIdx++] = 'a';
+
+
+                // Simular leitura de sensor
+                int sensorValueT = readTempSensor();
+                int sensorValueH = readHumidSensor();
+                int sensorValueC = readCO2Sensor();
+
+                sprintf(sensorStr, "%02d", abs(sensorValueT));
+
+                checksumBuffer[chksumIdx++] = 't';
+                checksumBuffer[chksumIdx++] = (sensorValueT >= 0) ? '+' : '-';
+
+                for (int k = 0; sensorStr[k] != '\0'; k++) {
+                    checksumBuffer[chksumIdx++] = sensorStr[k];
+                }
+
+                sprintf(sensorStr, "%03d", abs(sensorValueH));
+
+                checksumBuffer[chksumIdx++] = 'h';
+
+                for (int k = 0; sensorStr[k] != '\0'; k++) {
+                    checksumBuffer[chksumIdx++] = sensorStr[k];
+                }
+
+                sprintf(sensorStr, "%05d", abs(sensorValueH));
+
+                checksumBuffer[chksumIdx++] = 'c';
+
+                for (int k = 0; sensorStr[k] != '\0'; k++) {
+                    checksumBuffer[chksumIdx++] = sensorStr[k];
+                }
+
+                for (int k = 0; k < chksumIdx; k++) {
+                    checksum += checksumBuffer[k];
+                }
+                checksum = checksum % 256;
+                
+                snprintf(checksumStr, sizeof(checksumStr), "%03d", checksum);
+
+                txChar('#');
+                for (int k = 0; k < chksumIdx; k++) {
+                    txChar(checksumBuffer[k]);
+                }
+                txChar(checksumStr[0]);
+                txChar(checksumStr[1]);
+                txChar(checksumStr[2]);
+                txChar('!');
+
+                rxBufLen = 0;
+                return 0;
+
+
             case 'P':  
                 sid = UARTRxBuffer[i+2];
 
@@ -71,28 +141,18 @@ int cmdProcessor(void)
                 if (sid == 't') {
                     sensorValue = readTempSensor();
                 }
-
-
-                txChar('#');
-                txChar('p');
-                txChar('t');
-
-                if (sensorValue >= 0) {
-                    txChar('+');
-                } else {
-                    txChar('-');
-                    sensorValue = -sensorValue;
+                if (sid == 'h') {
+                    sensorValue = readHumidSensor();
+                }
+                if (sid == 'c') {
+                    sensorValue = readCO2Sensor();
                 }
 
-                char sensorStr[12];
-                sprintf(sensorStr, "%d", sensorValue);
-                for (int k = 0; sensorStr[k] != '\0'; k++) {
-                    txChar(sensorStr[k]);
-                }
-
-                unsigned char checksumBuffer[20];
-                int chksumIdx = 0;
+                sprintf(sensorStr, "%02d", abs(sensorValue));
+                fprintf(stderr, "HERE");
                 checksumBuffer[chksumIdx++] = 'p';
+                fprintf(stderr, "HERE0");
+
                 checksumBuffer[chksumIdx++] = sid;
                 checksumBuffer[chksumIdx++] = (sensorValue >= 0) ? '+' : '-';
 
@@ -100,19 +160,20 @@ int cmdProcessor(void)
                     checksumBuffer[chksumIdx++] = sensorStr[k];
                 }
 
-                int checksum = 0;
                 for (int k = 0; k < chksumIdx; k++) {
                     checksum += checksumBuffer[k];
                 }
                 checksum = checksum % 256;
 
-                char checksumStr[5];
                 snprintf(checksumStr, sizeof(checksumStr), "%03d", checksum);
 
+                txChar('#');
+                for (int k = 0; k < chksumIdx; k++) {
+                    txChar(checksumBuffer[k]);
+                }
                 txChar(checksumStr[0]);
                 txChar(checksumStr[1]);
                 txChar(checksumStr[2]);
-
                 txChar('!');
 
                 rxBufLen = 0;
@@ -126,25 +187,31 @@ int cmdProcessor(void)
     return -4;
 }
 
-int transmitInteger(int value, unsigned char *buffer, int *index) {
-    char tempStr[10];
-    sprintf(tempStr, "%d", value);
 
-    for (int i = 0; tempStr[i] != '\0'; i++) {
-        buffer[*index] = tempStr[i];
-        (*index)++;
+int readTempSensor() {
+    if (currentTempIndex >= sizeof(possTempArray) / sizeof(int)) {
+        currentTempIndex = 0;
     }
-
-    return 0;
+    int currentTemp = possTempArray[currentTempIndex++];
+    return currentTemp;
 }
 
 
-int readTempSensor() {
-    if (++currentTempIndex >= sizeof(possTempArray) / sizeof(int)) {
-        currentTempIndex = 0;
+int readHumidSensor() {
+    if (currentHumidIndex >= sizeof(possHumidArray) / sizeof(int)) {
+        currentHumidIndex = 0;
     }
-    currentTemp = possTempArray[currentTempIndex];
-    return currentTemp;
+    int currentHumid = possHumidArray[currentHumidIndex++];
+    return currentHumid;
+}
+
+
+int readCO2Sensor() {
+    if (currentCO2Index >= sizeof(possCO2Array) / sizeof(int)) {
+        currentCO2Index = 0;
+    }
+    int currentCO2 = possCO2Array[currentCO2Index++];
+    return currentCO2;
 }
 
 int calcChecksum(unsigned char * buf, int nbytes) {

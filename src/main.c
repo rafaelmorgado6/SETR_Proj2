@@ -22,8 +22,8 @@ int main(void)
 	int i,len, err;
 	unsigned char ans[30]; 
 	unsigned char ansTest1[]={'#','p','t', '+', '2', '1', '1', '1', '4','!'};
-	unsigned char ansTest[][11] = {
-		{'#','p','t','+','0','0','6','3','!','\0'},   // #pt+0063!
+	unsigned char ansTest[][12] = {
+		{'#','p','t','+','0','0','1','1','1','!'},   // #pt+0063!
 		{'#','p','t','+','1','0','1','1','2','!'},    // #pt+10112!
 		{'#','p','t','-','1','0','1','1','4','!'},    // #pt-10114!
 		{'#','p','t','+','3','0','1','1','4','!'},    // #pt+30114!
@@ -31,7 +31,7 @@ int main(void)
 		{'#','p','t','-','5','0','1','1','8','!'},    // #pt-50118!
 		{'#','p','t','+','6','0','1','1','7','!'}     // #pt+60117!
 	};
-	int t_count = 1;
+	int t_count = 0;
 	
 	printf("\n Smart Sensor interface emulation \n");
 	printf(" \t - simple illustration of interface and use \n\n\r");
@@ -79,16 +79,16 @@ int main(void)
 			}
 			printf("\n");
 		
-			if (t_count < 7) {
-				printf("Esperado: ");
-				for (int i = 0; ansTest[t_count][i] != '\0'; i++) {
-					printf("%c", ansTest[t_count][i]);
-				}
-				printf("\n");
-				t_count++;
-			} else {
-				printf("Sem valor esperado para esta iteração.\n");
+			if (t_count >= 7) {
+				t_count = 0;
 			}
+
+			printf("Esperado: ");
+			for (int i = 0; ansTest[t_count][i] != '\0'; i++) {
+				printf("%c", ansTest[t_count][i]);
+			}
+			printf("\n");
+			t_count++;
 		}
     }
 

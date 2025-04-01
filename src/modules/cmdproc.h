@@ -80,6 +80,16 @@ int calcChecksum(unsigned char * buf, int nbytes);
 int readTempSensor(void);
 
 /* ************************************************ */
+/* Simula a leitura da humidade do sensor           */
+/* ************************************************ */
+int readHumidSensor(void);
+
+/* ************************************************ */
+/* Simula a leitura de CO2 do sensor                */
+/* ************************************************ */
+int readCO2Sensor(void);
+
+/* ************************************************ */
 /* Transmite um inteiro como uma string no buffer   */
 /* ************************************************ */
 int transmitInteger(int value, unsigned char *buffer, int *index);
