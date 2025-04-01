@@ -74,14 +74,4 @@ void getTxBuffer(unsigned char * buf, int * len);
 /* ************************************************ */ 
 int calcChecksum(unsigned char * buf, int nbytes);
 
-/* ************************************************ */
-/* Simula a leitura de temperatura do sensor        */
-/* ************************************************ */
-int readTempSensor(void);
-
-/* ************************************************ */
-/* Transmite um inteiro como uma string no buffer   */
-/* ************************************************ */
-int transmitInteger(int value, unsigned char *buffer, int *index);
-
 #endif
