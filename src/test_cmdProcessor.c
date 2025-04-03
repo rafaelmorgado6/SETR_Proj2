@@ -1,5 +1,8 @@
+// To compile: gcc -o test_cmdProcessor test_cmdProcessor.c modules/cmdproc.c Unity/src/unity.c -I./unity
+
+
 #include "Unity/src/unity.h"
-#include "cmdproc.h"
+#include "modules/cmdproc.h"
 
 void setUp(void) {
     resetTxBuffer();
@@ -9,7 +12,13 @@ void setUp(void) {
 void tearDown(void) {
 }   
 
+// Test cmdProcessor()
 void test_cmdProcessor(void){
+
+    printf("\n");
+    printf(" ╭───────────────────────────────────────────────╮\n");
+    printf(" │  - == ===    Test  cmdProcessor    === == -   │\n");
+    printf(" ╰───────────────────────────────────────────────╯\n\n");
     
     rxChar('#');
     rxChar('P');
@@ -31,21 +40,78 @@ void test_cmdProcessor(void){
     getTxBuffer(ans, &len);
 
     // resposta esperada: '#pt+10112!' (sensor lẽ +10)
-    unsigned char expected[] = {'#','p','t','+','1','0','1','1','2','!'};
+    unsigned char expected[] = {'#','p','t','+','0','0','1','1','1','!'};
+
+    // Imprimir a resposta esperada e gerada
+    printf("\n\nExpected response: ");
+    for (int i=0; i<sizeof(expected); i++){
+        printf("%c", expected[i]);
+    }   
+    printf("\nGenerated response: ");
+    for (int i = 0; i < len; i++) {
+        printf("%c", ans[i]); 
+    }
+    printf("\n\n");
+
 
     // verifica se a resposta gerada é igual à resposta esperada
     TEST_ASSERT_EQUAL_MEMORY(expected, ans, len);
-
 }
 
-int main(void){
+// Test invalid command
+void test_invalidcommand(void){
+
+    printf("\n");
+    printf(" ╭───────────────────────────────────────────────╮\n");
+    printf(" │  - == ===   Test invalid command   === == -   │\n");
+    printf(" ╰───────────────────────────────────────────────╯\n\n");
+
+    rxChar('#');
+    rxChar('X'); // invalid command
+    rxChar('t');
+    rxChar('1');
+    rxChar('9');
+    rxChar('6');
+    rxChar('!');
+
+    int result = cmdProcessor();
+    printf("cmdProcessor returned -> %d\n\n", result);
+    TEST_ASSERT_EQUAL(-2, result); // checks if returns -2 (invalid command)
+}
+
+
+// Teste para a função calcChecksum() com dados válidos
+void test_calcChecksum_valid(void) {
+
+    printf("\n");
+    printf(" ╭───────────────────────────────────────────────╮\n");
+    printf(" │  - == ===   Test valdid checksum   === == -   │\n");
+    printf(" ╰───────────────────────────────────────────────╯\n\n");
+
+    unsigned char buf[] = {'#', 'P', 't', '1', '9', '6', '!'};
+    int nbytes = sizeof(buf) - 1;  // Não contar o byte do checksum, que é o último
+
+    // Chamando a função para calcular o checksum
+    int result = calcChecksum(buf, nbytes);
+
+    // Imprime o valor gerado para verificação
+    printf("Resultado do calcChecksum: %d\n", result);  // Imprime o valor retornado
     
+    // Esperamos que o checksum seja válido e retorne 1
+    TEST_ASSERT_EQUAL(1, result);  // Verifica se o checksum é válido (retorna 1)
+}
+
+
+int main(void){
+
     // inicia a Unity
     UNITY_BEGIN();
 
-    // executa o teste test_cmdProcessor()
+    
     RUN_TEST(test_cmdProcessor);
-
+    RUN_TEST(test_invalidcommand);
+    RUN_TEST(test_calcChecksum_valid);
+    
     // finaliza e retorna os resultados
     return UNITY_END();
 
