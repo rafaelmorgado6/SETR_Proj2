@@ -149,24 +149,27 @@ int cmdProcessor(void) {
                 }
 
                 sprintf(sensorStr, "%02d", abs(sensorValue));
-                fprintf(stderr, "HERE");
+                //fprintf(stderr, "HERE");
                 checksumBuffer[chksumIdx++] = 'p';
-                fprintf(stderr, "HERE0");
+                //fprintf(stderr, "HERE0");
 
                 checksumBuffer[chksumIdx++] = sid;
                 checksumBuffer[chksumIdx++] = (sensorValue >= 0) ? '+' : '-';
 
+                // Adicionar o valor do sensor (formatado como string)
+                char sensorStr[12];
+                sprintf(sensorStr, "%02d", abs(sensorValue));
                 for (int k = 0; sensorStr[k] != '\0'; k++) {
                     checksumBuffer[chksumIdx++] = sensorStr[k];
                 }
 
-                for (int k = 0; k < chksumIdx; k++) {
-                    checksum += checksumBuffer[k];
-                }
-                checksum = checksum % 256;
+                // Calcular o checksum com base no buffer completo
+                checksum = calcChecksum(checksumBuffer, chksumIdx);
 
+                // Formatar o checksum como uma string de 3 caracteres
                 snprintf(checksumStr, sizeof(checksumStr), "%03d", checksum);
 
+                // Enviar a resposta
                 txChar('#');
                 for (int k = 0; k < chksumIdx; k++) {
                     txChar(checksumBuffer[k]);
@@ -176,7 +179,7 @@ int cmdProcessor(void) {
                 txChar(checksumStr[2]);
                 txChar('!');
 
-                rxBufLen = 0;
+                rxBufLen = 0;  // Limpar o buffer de recepção
                 return 0;
 
             default:
@@ -204,7 +207,7 @@ int readHumidSensor() {
     int currentHumid = possHumidArray[currentHumidIndex++];
     return currentHumid;
 }
-
+    
 
 int readCO2Sensor() {
     if (currentCO2Index >= sizeof(possCO2Array) / sizeof(int)) {
@@ -214,24 +217,22 @@ int readCO2Sensor() {
     return currentCO2;
 }
 
-int calcChecksum(unsigned char * buf, int nbytes) {
+int calcChecksum(unsigned char *buf, int nbytes) {
     unsigned int checksum = 0;
 
-    for(int i = 0; i < nbytes; i++){
+    // Soma dos valores dos bytes do buffer
+    for (int i = 0; i < nbytes; i++) {
+        printf("\nbuff: %c\n", buf[i]);
         checksum += buf[i];
     }
 
+    // Garantir que o checksum seja um valor de 8 bits (0-255)
     checksum = checksum % 256;
 
-    unsigned char checksumStr[4];
-    snprintf((char *)checksumStr, sizeof(checksumStr), "%03u", checksum);
-
-    if(buf[nbytes] == checksumStr[0] && buf[nbytes+1] == checksumStr[1] && buf[nbytes+2] == checksumStr[2]){
-        return 1;  // Checksum válida
-    }
-
-    return 0;  // Checksum inválida       
+    // Retorna o checksum calculado
+    return checksum;
 }
+
 
 int rxChar(unsigned char car)
 {

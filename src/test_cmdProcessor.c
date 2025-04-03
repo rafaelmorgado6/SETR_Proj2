@@ -85,11 +85,13 @@ void test_calcChecksum_valid(void) {
 
     printf("\n");
     printf(" ╭───────────────────────────────────────────────╮\n");
-    printf(" │  - == ===   Test valdid checksum   === == -   │\n");
+    printf(" │  - == ===   Test valid checksum   === == -   │\n");
     printf(" ╰───────────────────────────────────────────────╯\n\n");
 
-    unsigned char buf[] = {'#', 'P', 't', '1', '9', '6', '!'};
-    int nbytes = sizeof(buf) - 1;  // Não contar o byte do checksum, que é o último
+    unsigned char buf[] = {'P', 't'};
+    
+    // O número de bytes será o total do buffer
+    int nbytes = sizeof(buf);
 
     // Chamando a função para calcular o checksum
     int result = calcChecksum(buf, nbytes);
@@ -97,9 +99,11 @@ void test_calcChecksum_valid(void) {
     // Imprime o valor gerado para verificação
     printf("Resultado do calcChecksum: %d\n", result);  // Imprime o valor retornado
     
-    // Esperamos que o checksum seja válido e retorne 1
-    TEST_ASSERT_EQUAL(1, result);  // Verifica se o checksum é válido (retorna 1)
+    // Esperamos que o checksum seja válido e retorne 196 (não 168)
+    TEST_ASSERT_EQUAL(196, result);  // Verifica se o checksum é válido (retorna 196)
 }
+
+
 
 
 int main(void){
