@@ -222,7 +222,7 @@ int calcChecksum(unsigned char *buf, int nbytes) {
 
     // Soma dos valores dos bytes do buffer
     for (int i = 0; i < nbytes; i++) {
-        printf("\nbuff: %c\n", buf[i]);
+        //printf("\nbuff: %c\n", buf[i]);
         checksum += buf[i];
     }
 
@@ -257,13 +257,11 @@ int txChar(unsigned char car)
 void resetRxBuffer(void)
 {
     rxBufLen = 0;        
-    return;
 }
 
 void resetTxBuffer(void)
 {
     txBufLen = 0;        
-    return;
 }
 
 void getTxBuffer(unsigned char * buf, int * len)
@@ -273,4 +271,12 @@ void getTxBuffer(unsigned char * buf, int * len)
         memcpy(buf,UARTTxBuffer,*len);
     }        
     return;
+}
+
+int getRxBufferSize(void){
+    return rxBufLen;
+}
+
+int getTxBufferSize(void){
+    return txBufLen;
 }

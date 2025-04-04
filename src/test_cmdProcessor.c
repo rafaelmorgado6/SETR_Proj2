@@ -97,6 +97,7 @@ void test_calcChecksum_valid(void) {
     printf("Result of calcChecksum: %d\n", result);  
     
     TEST_ASSERT_EQUAL(196, result);  
+}
 
 // Teste para a função calcChecksum() com dados inválidos
 void test_calcChecksum_invalid(void) {
@@ -118,8 +119,62 @@ void test_calcChecksum_invalid(void) {
     TEST_ASSERT_EQUAL(196, result); 
 }
 
+// Teste de reset de buffers
+void test_reset_buffers(void){
+    printf("\n");
+    printf(" ╭───────────────────────────────────────────────╮\n");
+    printf(" │  - == ===   Test  reset buffers    === == -   │\n");
+    printf(" ╰───────────────────────────────────────────────╯\n\n");
+    
+    rxChar('#');
+    rxChar('P');
+    rxChar('t');
+    rxChar('1');
+    rxChar('9');
+    rxChar('6');
+    rxChar('!');
 
+    cmdProcessor(); 
 
+    resetRxBuffer();
+    resetTxBuffer();
+
+    if (getRxBufferSize() == 0 && getTxBufferSize() == 0) {
+        printf("Test succeeded, buffers reseted successfuly\n");
+    }else {
+        printf("Test failed, buffers did not reseted successfuly\n");
+    }
+    
+    TEST_ASSERT_EQUAL(0, getRxBufferSize());
+    TEST_ASSERT_EQUAL(0, getTxBufferSize());
+}
+
+// Teste para erro de omissão de caractere (comando incompleto)
+void test_incomplete_command(void) {
+    printf("\n");
+    printf(" ╭───────────────────────────────────────────────╮\n");
+    printf(" │ - = = Test missing character in command = = - │\n");
+    printf(" ╰───────────────────────────────────────────────╯\n\n");
+    
+    // 1 - Envia o comando
+    rxChar('#');
+    rxChar('P');
+    // rxChar('t');
+    rxChar('1');
+    rxChar('9');
+    rxChar('6');
+    rxChar('!');
+
+    int err = cmdProcessor();
+        
+    if (err == -2) {
+        printf("Test succeeded, an omission was detected\n");
+    }else {
+        printf("Test failed, as omission was not detected\n");
+    }
+
+    TEST_ASSERT_EQUAL(-2, err);
+}
 
 int main(void){
 
@@ -131,7 +186,9 @@ int main(void){
     RUN_TEST(test_invalidcommand);
     RUN_TEST(test_calcChecksum_valid);
     RUN_TEST(test_calcChecksum_invalid);
-    
+    RUN_TEST(test_reset_buffers);
+    RUN_TEST(test_incomplete_command);
+
     // finaliza e retorna os resultados
     return UNITY_END();
 

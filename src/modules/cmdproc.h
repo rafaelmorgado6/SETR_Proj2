@@ -94,4 +94,13 @@ int readCO2Sensor(void);
 /* ************************************************ */
 int transmitInteger(int value, unsigned char *buffer, int *index);
 
+/* ************************************************ */
+/* Devolve size do buffer rx                        */
+/* ************************************************ */
+int getRxBufferSize(void);
+
+/* ************************************************ */
+/* Devolve size do buffer tx                        */
+/* ************************************************ */
+int getTxBufferSize(void);
 #endif
