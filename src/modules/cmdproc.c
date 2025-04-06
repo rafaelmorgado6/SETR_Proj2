@@ -28,6 +28,9 @@ static unsigned int currentCO2Index = 0;
 static unsigned int lastCO2Array[20];
 static unsigned int sizeCO2Array = 0;
 
+static unsigned char historyLBuffer[256];
+static unsigned char historyLIdx = 0;
+
 /* Function implementation */
 
 /* 
@@ -73,7 +76,7 @@ int cmdProcessor(void) {
                     return -4;
                 }
 
-                checksumBuffer[chksumIdx++] = 'l';
+                checksumBuffer[chksumIdx++] = 'a';
 
 
                 // Simular leitura de sensor
@@ -98,7 +101,7 @@ int cmdProcessor(void) {
                     checksumBuffer[chksumIdx++] = sensorStr[k];
                 }
 
-                sprintf(sensorStr, "%05d", abs(sensorValueH));
+                sprintf(sensorStr, "%05d", abs(sensorValueC));
 
                 checksumBuffer[chksumIdx++] = 'c';
 
@@ -128,48 +131,78 @@ int cmdProcessor(void) {
 
             case 'L':
 
-                // Checksum de entrada: apenas sobre CMD ('A')
+                // Checksum de entrada: apenas sobre CMD ('L')
                 if(!(calcChecksum(&(UARTRxBuffer[i+1]), 1))) {
                     return -3;
                 }
 
-                if(UARTRxBuffer[i+5] != EOF_SYM) {
+
+                //  Smaller message that asks how many messages are needed to transmit the data
+                if(UARTRxBuffer[i+5] == EOF_SYM) {
+                    memset(historyLBuffer, 0, sizeof(historyLBuffer));
+                    historyLIdx = 0;
+
+                    //  Iterate over lastTempArray and print values
+                    historyLBuffer[historyLIdx++] = 't';
+                    for (unsigned int i = 0; i < sizeTempArray; i++) {
+                        sprintf(sensorStr, "%02d", abs(lastTempArray[i]));
+                        historyLBuffer[historyLIdx++] = (lastTempArray[i] >= 0) ? '+' : '-';
+
+                        for (int k = 0; sensorStr[k] != '\0'; k++) {
+                            historyLBuffer[historyLIdx++] = sensorStr[k];
+                        }
+                    }
+
+                    //  Iterate over lastHumidArray and print values
+                    historyLBuffer[historyLIdx++] = 'h';
+                    for (unsigned int i = 0; i < sizeHumidArray; i++) {
+                        sprintf(sensorStr, "%03d", abs(lastHumidArray[i]));
+
+                        for (int k = 0; sensorStr[k] != '\0'; k++) {
+                            historyLBuffer[historyLIdx++] = sensorStr[k];
+                        }
+                    }
+
+                    //  Iterate over lastCO2Array and print values
+                    historyLBuffer[historyLIdx++] = 'c';
+                    for (unsigned int i = 0; i < sizeCO2Array; i++) {
+                        sprintf(sensorStr, "%05d", abs(lastCO2Array[i]));
+
+                        for (int k = 0; sensorStr[k] != '\0'; k++) {
+                            historyLBuffer[historyLIdx++] = sensorStr[k];
+                        }
+                    }
+
+                    checksumBuffer[chksumIdx++] = 'l';
+
+                    //  Send num of messages needed to get all the data
+                    char sizeStr[5];
+                    snprintf(sizeStr, sizeof(sizeStr), "%02d", (historyLIdx/15)+1 );
+                    for (int k = 0; sizeStr[k] != '\0'; k++) {
+                        checksumBuffer[chksumIdx++] = sizeStr[k];
+                    }
+                }
+
+
+                //  Larger message that asks for extra message number X
+                else if (UARTRxBuffer[i+7] == EOF_SYM) {
+                    int messageNumber = (UARTRxBuffer[i+2] - '0') * 10 + (UARTRxBuffer[i+3] - '0');
+
+                    checksumBuffer[chksumIdx++] = 'l';
+
+                    for (int k = messageNumber*14; k < historyLIdx && k < (messageNumber + 1)*14 ; k++) {
+                        checksumBuffer[chksumIdx++] = historyLBuffer[k];
+                    }
+                }
+
+
+                else {
                     return -4;
                 }
 
-                checksumBuffer[chksumIdx++] = 'a';
 
 
-                // Iterate over lastTempArray and print values
-                checksumBuffer[chksumIdx++] = 't';
-                for (unsigned int i = 0; i < sizeTempArray; i++) {
-                    sprintf(sensorStr, "%02d", abs(lastTempArray[i]));
-                    checksumBuffer[chksumIdx++] = (lastTempArray[i] >= 0) ? '+' : '-';
 
-                    for (int k = 0; sensorStr[k] != '\0'; k++) {
-                        checksumBuffer[chksumIdx++] = sensorStr[k];
-                    }
-                }
-
-                // Iterate over lastHumidArray and print values
-                checksumBuffer[chksumIdx++] = 'h';
-                for (unsigned int i = 0; i < sizeHumidArray; i++) {
-                    sprintf(sensorStr, "%03d", abs(lastHumidArray[i]));
-
-                    for (int k = 0; sensorStr[k] != '\0'; k++) {
-                        checksumBuffer[chksumIdx++] = sensorStr[k];
-                    }
-                }
-
-                // Iterate over lastCO2Array and print values
-                checksumBuffer[chksumIdx++] = 'c';
-                for (unsigned int i = 0; i < sizeCO2Array; i++) {
-                    sprintf(sensorStr, "%05d", abs(lastCO2Array[i]));
-
-                    for (int k = 0; sensorStr[k] != '\0'; k++) {
-                        checksumBuffer[chksumIdx++] = sensorStr[k];
-                    }
-                }
 
                 for (int k = 0; k < chksumIdx; k++) {
                     checksum += checksumBuffer[k];

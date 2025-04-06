@@ -64,6 +64,9 @@ int main(void)
     char opcao;
 
     while (1) {
+		resetRxBuffer();
+		resetTxBuffer();
+
         printf("\nChoose the type of data to ask for:\n");
         printf("  a - All\n");
         printf("  l - Last 20 samples of all\n");
@@ -80,9 +83,6 @@ int main(void)
         }
 
         if (opcao == 'a') {
-			resetRxBuffer();
-			resetTxBuffer();
-		
 			rxChar('#');
 			rxChar('A');
 			rxChar('0');
@@ -102,9 +102,7 @@ int main(void)
 		}
 
         else if (opcao == 'l') {
-			resetRxBuffer();
-			resetTxBuffer();
-		
+			//  Requests how many messages are needed to get all the historical information
 			rxChar('#');
 			rxChar('L');
 			rxChar('0');
@@ -114,19 +112,68 @@ int main(void)
 		
 			cmdProcessor();
 			getTxBuffer(ans, &len);
-		
-			printf("Resposta do sensor: ");
+
+			printf("Resposta do sensor:");
+
 			for (int i = 0; i < len; i++) {
 				printf("%c", ans[i]);
 			}
 			printf("\n");
-			t_count++;
+
+			int numMessages = (ans[2] - '0') * 10 + (ans[3] - '0');
+		
+			printf("Serão precisas %i mensagens.\n", numMessages);
+
+			for (unsigned int messageIdx = 0; messageIdx < numMessages; messageIdx++) {
+				resetRxBuffer();
+				resetTxBuffer();
+				//  Send the message request with the ID of the message
+				char sizeStr[5];
+				unsigned char checksumBuffer[256];
+				int chksumIdx = 0;
+				int checksum = 0;
+				char checksumStr[5];
+
+				snprintf(sizeStr, sizeof(sizeStr), "%02d", messageIdx);
+
+                checksumBuffer[chksumIdx++] = 'L';
+				checksumBuffer[chksumIdx++] = sizeStr[0];
+				checksumBuffer[chksumIdx++] = sizeStr[1];
+				
+                for (int k = 0; k < chksumIdx; k++) {
+                    checksum += checksumBuffer[k];
+                }
+                checksum = checksum % 256;
+                
+                snprintf(checksumStr, sizeof(checksumStr), "%03d", checksum);
+
+                rxChar('#');
+                for (int k = 0; k < chksumIdx; k++) {
+                    rxChar(checksumBuffer[k]);
+                }
+                rxChar(checksumStr[0]);
+                rxChar(checksumStr[1]);
+                rxChar(checksumStr[2]);
+                rxChar('!');
+
+				//  Receive the data from the message and store it
+				cmdProcessor();
+				getTxBuffer(ans, &len);
+	
+				printf("%d - Resposta do sensor: ", messageIdx);
+	
+				for (int i = 0; i < len; i++) {
+					printf("%c", ans[i]);
+				}
+
+				printf("\n");
+			}
+
+
+
 		}
 
         else if (opcao == 't') {
-			resetRxBuffer();
-			resetTxBuffer();
-		
 			rxChar('#');
 			rxChar('P');
 			rxChar('t');
@@ -157,9 +204,6 @@ int main(void)
 		}
 
         else if (opcao == 'h') {
-			resetRxBuffer();
-			resetTxBuffer();
-		
 			rxChar('#');
 			rxChar('P');
 			rxChar('h');
@@ -190,9 +234,6 @@ int main(void)
 		}
 
         else if (opcao == 'c') {
-			resetRxBuffer();
-			resetTxBuffer();
-		
 			rxChar('#');
 			rxChar('P');
 			rxChar('c');
