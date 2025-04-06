@@ -22,8 +22,8 @@ int main(void)
 	int i,len, err;
 	unsigned char ans[256]; 
 	unsigned char ansTest1[]={'#','p','t', '+', '2', '1', '1', '1', '4','!'};
-	unsigned char ansTestT[][16] = {
-		{'#','p','t','+','0','0','1','1','1','!'},    // #pt+00111!
+	unsigned char ansTesttemperature[][32] = {
+		{'#','p','t','+','0','0','1','1','1','!'},   // #pt+0063!
 		{'#','p','t','+','1','0','1','1','2','!'},    // #pt+10112!
 		{'#','p','t','-','1','0','1','1','4','!'},    // #pt-10114!
 		{'#','p','t','+','3','0','1','1','4','!'},    // #pt+30114!
@@ -31,7 +31,7 @@ int main(void)
 		{'#','p','t','-','5','0','1','1','8','!'},    // #pt-50118!
 		{'#','p','t','+','6','0','1','1','7','!'}     // #pt+60117!
 	};
-	unsigned char ansTestH[][16] = {
+	unsigned char ansTesthumidity[][32] = {
 		{'#','p','h','0','0','0','1','0','4','!'},
 		{'#','p','h','0','1','0','1','0','5','!'},
 		{'#','p','h','0','2','0','1','0','6','!'},
@@ -40,7 +40,7 @@ int main(void)
 		{'#','p','h','0','8','0','1','1','2','!'},
 		{'#','p','h','1','0','0','1','0','5','!'}
 	};
-	unsigned char ansTestC[][16] = {
+	unsigned char ansTestco2[][32] = {
 		{'#','p','h','0','0','0','0','0','1','9','5','!'},
 		{'#','p','h','0','0','4','0','0','1','9','9','!'},
 		{'#','p','h','0','1','0','0','0','1','9','6','!'},
@@ -61,7 +61,8 @@ int main(void)
 	resetRxBuffer();
 	
 	/* Test 0*/
-    char opcao;
+    char option_sensor;
+	char option_command;
 
     while (1) {
 		resetRxBuffer();
@@ -75,14 +76,14 @@ int main(void)
         printf("  c - CO2\n");
         printf("  q - Sair\n");
         printf("Opção: ");
-        scanf(" %c", &opcao);
+        scanf(" %c", &option_sensor);
 
-        if (opcao == 'q') {
+        if (option_sensor == 'q') {
             printf("A sair...\n");
             break;
         }
 
-        if (opcao == 'a') {
+        else if (option_sensor == 'a') {
 			rxChar('#');
 			rxChar('A');
 			rxChar('0');
@@ -101,7 +102,7 @@ int main(void)
 			t_count++;
 		}
 
-        else if (opcao == 'l') {
+        else if (option_sensor == 'l') {
 			//  Requests how many messages are needed to get all the historical information
 			rxChar('#');
 			rxChar('L');
@@ -173,7 +174,7 @@ int main(void)
 
 		}
 
-        else if (opcao == 't') {
+        else if (option_sensor == 't') {
 			rxChar('#');
 			rxChar('P');
 			rxChar('t');
@@ -196,20 +197,20 @@ int main(void)
 			}
 
 			printf("Esperado: ");
-			for (int i = 0; ansTestT[t_count][i] != '\0'; i++) {
-				printf("%c", ansTestT[t_count][i]);
+			for (int i = 0; ansTesttemperature[t_count][i] != '\0'; i++) {
+				printf("%c", ansTesttemperature[t_count][i]);
 			}
 			printf("\n");
 			t_count++;
 		}
 
-        else if (opcao == 'h') {
+        else if (option_sensor == 'h') {
 			rxChar('#');
 			rxChar('P');
 			rxChar('h');
 			rxChar('1');
-			rxChar('8');
-			rxChar('4');
+			rxChar('9');
+			rxChar('6');
 			rxChar('!');
 		
 			cmdProcessor();
@@ -226,20 +227,20 @@ int main(void)
 			}
 
 			printf("Esperado: ");
-			for (int i = 0; ansTestH[h_count][i] != '\0'; i++) {
-				printf("%c", ansTestH[h_count][i]);
+			for (int i = 0; ansTesthumidity[h_count][i] != '\0'; i++) {
+				printf("%c", ansTesthumidity[h_count][i]);
 			}
 			printf("\n");
 			h_count++;
 		}
 
-        else if (opcao == 'c') {
+        else if (option_sensor == 'c') {
 			rxChar('#');
 			rxChar('P');
 			rxChar('c');
 			rxChar('1');
-			rxChar('7');
 			rxChar('9');
+			rxChar('6');
 			rxChar('!');
 		
 			cmdProcessor();
@@ -256,12 +257,13 @@ int main(void)
 			}
 
 			printf("Esperado: ");
-			for (int i = 0; ansTestC[c_count][i] != '\0'; i++) {
-				printf("%c", ansTestC[c_count][i]);
+			for (int i = 0; ansTestco2[c_count][i] != '\0'; i++) {
+				printf("%c", ansTestco2[c_count][i]);
 			}
 			printf("\n");
 			c_count++;
 		}
+	
     }
 
 	/* Test 1 */
