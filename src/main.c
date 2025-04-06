@@ -20,10 +20,10 @@
 int main(void) 
 {
 	int i,len, err;
-	unsigned char ans[30]; 
+	unsigned char ans[256]; 
 	unsigned char ansTest1[]={'#','p','t', '+', '2', '1', '1', '1', '4','!'};
-	unsigned char ansTest[][12] = {
-		{'#','p','t','+','0','0','1','1','1','!'},   // #pt+0063!
+	unsigned char ansTestT[][16] = {
+		{'#','p','t','+','0','0','1','1','1','!'},    // #pt+00111!
 		{'#','p','t','+','1','0','1','1','2','!'},    // #pt+10112!
 		{'#','p','t','-','1','0','1','1','4','!'},    // #pt-10114!
 		{'#','p','t','+','3','0','1','1','4','!'},    // #pt+30114!
@@ -31,7 +31,27 @@ int main(void)
 		{'#','p','t','-','5','0','1','1','8','!'},    // #pt-50118!
 		{'#','p','t','+','6','0','1','1','7','!'}     // #pt+60117!
 	};
+	unsigned char ansTestH[][16] = {
+		{'#','p','h','0','0','0','1','0','4','!'},
+		{'#','p','h','0','1','0','1','0','5','!'},
+		{'#','p','h','0','2','0','1','0','6','!'},
+		{'#','p','h','0','4','0','1','0','8','!'},
+		{'#','p','h','0','6','0','1','1','0','!'},
+		{'#','p','h','0','8','0','1','1','2','!'},
+		{'#','p','h','1','0','0','1','0','5','!'}
+	};
+	unsigned char ansTestC[][16] = {
+		{'#','p','h','0','0','0','0','0','1','9','5','!'},
+		{'#','p','h','0','0','4','0','0','1','9','9','!'},
+		{'#','p','h','0','1','0','0','0','1','9','6','!'},
+		{'#','p','h','0','2','5','0','0','2','0','2','!'},
+		{'#','p','h','0','5','0','0','0','2','0','0','!'},
+		{'#','p','h','1','0','0','0','0','1','9','6','!'},
+		{'#','p','h','2','0','0','0','0','1','9','7','!'}
+	};
 	int t_count = 0;
+	int h_count = 0;
+	int c_count = 0;
 	
 	printf("\n Smart Sensor interface emulation \n");
 	printf(" \t - simple illustration of interface and use \n\n\r");
@@ -44,10 +64,12 @@ int main(void)
     char opcao;
 
     while (1) {
-        printf("\nEscolha o tipo de dado a simular:\n");
-        printf("  t - Temperatura\n");
-        printf("  h - Humidade (não implementado)\n");
-        printf("  c - CO2 (não implementado)\n");
+        printf("\nChoose the type of data to ask for:\n");
+        printf("  a - All\n");
+        printf("  l - Last 20 samples of all\n");
+        printf("  t - Temperature\n");
+        printf("  h - Humidity\n");
+        printf("  c - CO2\n");
         printf("  q - Sair\n");
         printf("Opção: ");
         scanf(" %c", &opcao);
@@ -57,8 +79,51 @@ int main(void)
             break;
         }
 
-        if (opcao == 't') {
-			
+        if (opcao == 'a') {
+			resetRxBuffer();
+			resetTxBuffer();
+		
+			rxChar('#');
+			rxChar('A');
+			rxChar('0');
+			rxChar('6');
+			rxChar('5');
+			rxChar('!');
+		
+			cmdProcessor();
+			getTxBuffer(ans, &len);
+		
+			printf("Resposta do sensor: ");
+			for (int i = 0; i < len; i++) {
+				printf("%c", ans[i]);
+			}
+			printf("\n");
+			t_count++;
+		}
+
+        else if (opcao == 'l') {
+			resetRxBuffer();
+			resetTxBuffer();
+		
+			rxChar('#');
+			rxChar('L');
+			rxChar('0');
+			rxChar('7');
+			rxChar('6');
+			rxChar('!');
+		
+			cmdProcessor();
+			getTxBuffer(ans, &len);
+		
+			printf("Resposta do sensor: ");
+			for (int i = 0; i < len; i++) {
+				printf("%c", ans[i]);
+			}
+			printf("\n");
+			t_count++;
+		}
+
+        else if (opcao == 't') {
 			resetRxBuffer();
 			resetTxBuffer();
 		
@@ -84,11 +149,77 @@ int main(void)
 			}
 
 			printf("Esperado: ");
-			for (int i = 0; ansTest[t_count][i] != '\0'; i++) {
-				printf("%c", ansTest[t_count][i]);
+			for (int i = 0; ansTestT[t_count][i] != '\0'; i++) {
+				printf("%c", ansTestT[t_count][i]);
 			}
 			printf("\n");
 			t_count++;
+		}
+
+        else if (opcao == 'h') {
+			resetRxBuffer();
+			resetTxBuffer();
+		
+			rxChar('#');
+			rxChar('P');
+			rxChar('h');
+			rxChar('1');
+			rxChar('8');
+			rxChar('4');
+			rxChar('!');
+		
+			cmdProcessor();
+			getTxBuffer(ans, &len);
+		
+			printf("Resposta do sensor: ");
+			for (int i = 0; i < len; i++) {
+				printf("%c", ans[i]);
+			}
+			printf("\n");
+		
+			if (h_count >= 7) {
+				h_count = 0;
+			}
+
+			printf("Esperado: ");
+			for (int i = 0; ansTestH[h_count][i] != '\0'; i++) {
+				printf("%c", ansTestH[h_count][i]);
+			}
+			printf("\n");
+			h_count++;
+		}
+
+        else if (opcao == 'c') {
+			resetRxBuffer();
+			resetTxBuffer();
+		
+			rxChar('#');
+			rxChar('P');
+			rxChar('c');
+			rxChar('1');
+			rxChar('7');
+			rxChar('9');
+			rxChar('!');
+		
+			cmdProcessor();
+			getTxBuffer(ans, &len);
+		
+			printf("Resposta do sensor: ");
+			for (int i = 0; i < len; i++) {
+				printf("%c", ans[i]);
+			}
+			printf("\n");
+		
+			if (c_count >= 7) {
+				c_count = 0;
+			}
+
+			printf("Esperado: ");
+			for (int i = 0; ansTestC[c_count][i] != '\0'; i++) {
+				printf("%c", ansTestC[c_count][i]);
+			}
+			printf("\n");
+			c_count++;
 		}
     }
 
