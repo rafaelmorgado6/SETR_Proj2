@@ -259,14 +259,10 @@ int cmdProcessor(void) {
                     sprintf(sensorStr, "%05d", abs(sensorValue));
                 }
 
-
-
                 // Adicionar o valor do sensor (formatado como string)
                 for (int k = 0; sensorStr[k] != '\0'; k++) {
                     checksumBuffer[chksumIdx++] = sensorStr[k];
                 }
-
-
 
                 // Calcular o checksum com base no buffer completo
                 checksum = calcChecksum(checksumBuffer, chksumIdx);
