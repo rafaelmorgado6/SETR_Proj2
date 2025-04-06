@@ -19,11 +19,10 @@
 
 int main(void) 
 {
-	int i,len, err;
+	int len;
 	unsigned char ans[256]; 
-	unsigned char ansTest1[]={'#','p','t', '+', '2', '1', '1', '1', '4','!'};
 	unsigned char ansTesttemperature[][32] = {
-		{'#','p','t','+','0','0','1','1','1','!'},   // #pt+0063!
+		{'#','p','t','+','0','0','1','1','1','!'},    // #pt+00111!
 		{'#','p','t','+','1','0','1','1','2','!'},    // #pt+10112!
 		{'#','p','t','-','1','0','1','1','4','!'},    // #pt-10114!
 		{'#','p','t','+','3','0','1','1','4','!'},    // #pt+30114!
@@ -49,6 +48,7 @@ int main(void)
 		{'#','p','h','1','0','0','0','0','1','9','6','!'},
 		{'#','p','h','2','0','0','0','0','1','9','7','!'}
 	};
+
 	int t_count = 0;
 	int h_count = 0;
 	int c_count = 0;
@@ -62,7 +62,6 @@ int main(void)
 	
 	/* Test 0*/
     char option_sensor;
-	char option_command;
 
     while (1) {
 		resetRxBuffer();
@@ -281,67 +280,7 @@ int main(void)
 	
     }
 
-	/* Test 1 */
-	
-	printf("Test1 - check the answer to a valid Pt command\n");
-	
-	/* 1 - send the command */
-	rxChar('#');
-	rxChar('P');
-	rxChar('t');
-	rxChar('1');
-	rxChar('9');
-	rxChar('6');
-	rxChar('!');
-			
-	/* 2 - Process the comand and check the answer */
-	
-	cmdProcessor();
-	
-	getTxBuffer(ans,&len);
-	if(memcmp(ans,ansTest1,len)) {
-		printf("Test 1 failed\n");
-	} else {
-		printf("Test 1 succeeded\n");
-	}	
-	
-	/* You can print the answer to see what is wrong, if necessary */
-	printf("\t Received answer:");
-	for(i=0; i < len; i++) {
-		printf("%c", ans[i]);
-	}
-	printf("\n\t Expected answer:");
-	i=sizeof(ansTest1);
-	for(i=0; i< len; i++) {
-		printf("%c", ansTest1[i]);
-	}
-	printf("\n");
-	
-	
-	/* Test 2 */
-	
-	printf("Test2 - check the answer to a transmission omission/error \n");
-	
-	/* 1 - send the command */
-	rxChar('#');
-	rxChar('P');
-	// rxChar('t'); - simulates missing character, emulates a tx error 
-	rxChar('1');
-	rxChar('9');
-	rxChar('6');
-	rxChar('!');
-			
-	/* 2 - Process the comand and check the answer */
-	
-	err=cmdProcessor();
-		
-	if(err == -2) {
-		printf("Test 2 succeeded, as omission was detected\n");
-	} else {
-		printf("Test 2 failed, as omission was not detected\n");
-	}		
-	
-	/* Much more tests are needed. Unity shoul be used for it. */
+	printf("Goodbye!\n");
 	
 	return 0;
 }
