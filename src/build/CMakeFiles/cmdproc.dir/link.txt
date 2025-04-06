@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcmdproc.a CMakeFiles/cmdproc.dir/modules/cmdproc.c.o
+/usr/bin/ranlib libcmdproc.a

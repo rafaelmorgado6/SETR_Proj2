@@ -1,0 +1,6 @@
+/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles/cmdproc.dir
+/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles/unity.dir
+/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles/main.dir
+/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles/tests.dir
+/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles/edit_cache.dir
+/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles/rebuild_cache.dir
