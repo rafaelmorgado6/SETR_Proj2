@@ -177,7 +177,17 @@ int cmdProcessor(void) {
 
                     //  Send num of messages needed to get all the data
                     char sizeStr[5];
-                    snprintf(sizeStr, sizeof(sizeStr), "%02d", (historyLIdx/15)+1 );
+
+                    int messageNumber;
+
+                    if (historyLIdx <= 3) {
+                        messageNumber = 0;
+                    }
+                    else {
+                        messageNumber = (historyLIdx/15)+1;
+                    }
+
+                    snprintf(sizeStr, sizeof(sizeStr), "%02d", messageNumber);
                     for (int k = 0; sizeStr[k] != '\0'; k++) {
                         checksumBuffer[chksumIdx++] = sizeStr[k];
                     }

@@ -73,8 +73,11 @@ tests: /usr/lib/Scrt1.o \
   /usr/lib/libc.so.6 \
   /usr/lib/libc_nonshared.a \
   CMakeFiles/tests.dir/tests.c.o \
-  libcmdproc.a
+  libcmdproc.a \
+  libunity.a
 
+
+libunity.a:
 
 libcmdproc.a:
 
