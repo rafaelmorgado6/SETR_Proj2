@@ -68,14 +68,17 @@ int main(void)
 		resetRxBuffer();
 		resetTxBuffer();
 
-        printf("\nChoose the type of data to ask for:\n");
-        printf("  a - All\n");
-        printf("  l - Last 20 samples of all\n");
-        printf("  t - Temperature\n");
-        printf("  h - Humidity\n");
-        printf("  c - CO2\n");
-        printf("  q - Sair\n");
-        printf("Opção: ");
+		printf("\n ╭────────────────────────────────────╮\n");
+		printf(" │ Choose the type of data to ask for │\n");
+		printf(" ╰┬───────────────────────────────────╯\n");
+	
+        printf("  ├─> a: All\n");
+        printf("  ├─> l: Last 20 samples of all\n");
+        printf("  ├─> t: Temperature\n");
+        printf("  ├─> h: Humidity\n");
+        printf("  ├─> c: CO2\n");
+        printf("  ╰─> q: Sair\n\n");
+        printf("   ─> Opção: ");
         scanf(" %c", &option_sensor);
 
         if (option_sensor == 'q') {
@@ -91,15 +94,19 @@ int main(void)
 			rxChar('5');
 			rxChar('!');
 		
+			printf("   ─> Request Message:   #A065!\n");
+
 			cmdProcessor();
 			getTxBuffer(ans, &len);
 		
-			printf("Resposta do sensor: ");
+			printf("   ─> Sensor Response:   ");
 			for (int i = 0; i < len; i++) {
 				printf("%c", ans[i]);
 			}
 			printf("\n");
 			t_count++;
+			h_count++;
+			c_count++;
 		}
 
         else if (option_sensor == 'l') {
@@ -110,11 +117,13 @@ int main(void)
 			rxChar('7');
 			rxChar('6');
 			rxChar('!');
+
+			printf("   ─> Request Message:   #L076!\n");
 		
 			cmdProcessor();
 			getTxBuffer(ans, &len);
 
-			printf("Resposta do sensor:");
+			printf("   ─> Sensor Response:   ");
 
 			for (int i = 0; i < len; i++) {
 				printf("%c", ans[i]);
@@ -182,11 +191,13 @@ int main(void)
 			rxChar('9');
 			rxChar('6');
 			rxChar('!');
+
+			printf("   ─> Request Message:   #Pt196!\n");
 		
 			cmdProcessor();
 			getTxBuffer(ans, &len);
 		
-			printf("Resposta do sensor: ");
+			printf("   ─> Sensor Response:   ");
 			for (int i = 0; i < len; i++) {
 				printf("%c", ans[i]);
 			}
@@ -196,7 +207,7 @@ int main(void)
 				t_count = 0;
 			}
 
-			printf("Esperado: ");
+			printf("   ─> Expected Response: ");
 			for (int i = 0; ansTesttemperature[t_count][i] != '\0'; i++) {
 				printf("%c", ansTesttemperature[t_count][i]);
 			}
@@ -209,14 +220,16 @@ int main(void)
 			rxChar('P');
 			rxChar('h');
 			rxChar('1');
-			rxChar('9');
-			rxChar('6');
+			rxChar('8');
+			rxChar('4');
 			rxChar('!');
+
+			printf("   ─> Request Message:   #Ph184!\n");
 		
 			cmdProcessor();
 			getTxBuffer(ans, &len);
 		
-			printf("Resposta do sensor: ");
+			printf("   ─> Sensor Response:   ");
 			for (int i = 0; i < len; i++) {
 				printf("%c", ans[i]);
 			}
@@ -226,7 +239,7 @@ int main(void)
 				h_count = 0;
 			}
 
-			printf("Esperado: ");
+			printf("   ─> Expected Response: ");
 			for (int i = 0; ansTesthumidity[h_count][i] != '\0'; i++) {
 				printf("%c", ansTesthumidity[h_count][i]);
 			}
@@ -239,14 +252,16 @@ int main(void)
 			rxChar('P');
 			rxChar('c');
 			rxChar('1');
+			rxChar('7');
 			rxChar('9');
-			rxChar('6');
 			rxChar('!');
+
+			printf("   ─> Request Message:   #Pc179!\n");
 		
 			cmdProcessor();
 			getTxBuffer(ans, &len);
 		
-			printf("Resposta do sensor: ");
+			printf("   ─> Sensor Response:   ");
 			for (int i = 0; i < len; i++) {
 				printf("%c", ans[i]);
 			}
@@ -256,7 +271,7 @@ int main(void)
 				c_count = 0;
 			}
 
-			printf("Esperado: ");
+			printf("   ─> Expected Response: ");
 			for (int i = 0; ansTestco2[c_count][i] != '\0'; i++) {
 				printf("%c", ansTestco2[c_count][i]);
 			}
