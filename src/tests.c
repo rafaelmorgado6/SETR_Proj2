@@ -1,15 +1,35 @@
 #include "Unity/src/unity.h"
 #include "modules/cmdproc.h"
 
+
+/** \file tests.c
+*   \brief Unit tests for Assignment 2
+**
+*        This file tests all the funtions on the 
+*       CMD_Proc module developped for this assignment
+**
+* \author Pedro Ramos, n.º 107348
+* \author Rafael Morgado, n.º 104277
+* \date 06/04/2025
+*/
+
+/**
+ * @brief Set up function executed before each test.
+ */
 void setUp(void) {
     resetTxBuffer();
     resetRxBuffer();
 }
 
+/**
+ * @brief Tear down function executed after each test.
+ */
 void tearDown(void) {
-}   
+}  
 
-// Test cmdProcessor()
+/**
+ * @brief Test the temperature command processor.
+ */
 void test_Temperature(void){
 
     printf("\n");
@@ -66,6 +86,9 @@ void test_Temperature(void){
     }
 }
 
+/**
+ * @brief Test the humidity command processor.
+ */
 void test_Humidity(void){
 
     printf("\n");
@@ -122,6 +145,9 @@ void test_Humidity(void){
     }
 }
 
+/**
+ * @brief Test the CO2 command processor.
+ */
 void test_CO2(void){
 
     printf("\n");
@@ -178,7 +204,9 @@ void test_CO2(void){
     }
 }
 
-// Test invalid command
+/**
+ * @brief Test the "all" command processor.
+ */
 void test_all(void){
 
     printf("\n");
@@ -219,7 +247,9 @@ void test_all(void){
     TEST_ASSERT_EQUAL_MEMORY(ansTest, ans, len);
 }
 
-// Test history command
+/**
+ * @brief Test the history command processor.
+ */
 void test_history(void){
 
     printf("\n");
@@ -311,8 +341,9 @@ void test_history(void){
     printf("\n\n");
 }
 
-
-// Test invalid command
+/**
+ * @brief Test the reset command processor.
+ */
 void test_reset(void){
 
     printf("\n");
@@ -392,7 +423,9 @@ void test_reset(void){
     printf("\n\n");
 }
 
-// Test invalid command
+/**
+ * @brief Test an invalid command.
+ */
 void test_invalidcommand(void){
 
     printf("\n");
@@ -413,8 +446,9 @@ void test_invalidcommand(void){
     TEST_ASSERT_EQUAL(-2, result); // checks if returns -2 (invalid command)
 }
 
-
-// Teste para a função calcChecksum() com dados válidos
+/**
+ * @brief Test checksum calculation with valid data.
+ */
 void test_calcChecksum_valid(void) {
 
     printf("\n");
@@ -433,7 +467,10 @@ void test_calcChecksum_valid(void) {
     TEST_ASSERT_EQUAL(196, result);  
 }
 
-// Teste para a função calcChecksum() com dados inválidos
+
+/**
+ * @brief Test checksum calculation with invalid data.
+ */
 void test_calcChecksum_invalid(void) {
 
     printf("\n");
@@ -453,7 +490,9 @@ void test_calcChecksum_invalid(void) {
     TEST_ASSERT_NOT_EQUAL(196, result); 
 }
 
-// Teste de reset de buffers
+/**
+ * @brief Test reset of buffers.
+ */
 void test_reset_buffers(void){
     printf("\n");
     printf(" ╭─────────────────────────────────────────────╮\n");
@@ -483,7 +522,9 @@ void test_reset_buffers(void){
     TEST_ASSERT_EQUAL(0, getTxBufferSize());
 }
 
-// Teste para erro de omissão de caractere (comando incompleto)
+/**
+ * @brief Test for missing characters in the command.
+ */
 void test_incomplete_command(void) {
     printf("\n");
     printf(" ╭─────────────────────────────────────────────╮\n");

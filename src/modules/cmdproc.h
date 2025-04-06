@@ -12,6 +12,18 @@
 /*														*/
 /* ******************************************************/
 
+
+/** \file cmdproc.h
+*   \brief Base code for Unit Testing
+*
+*        Simple example of command processor 
+*       for a smart sensor node with 3 sensors.
+*
+* \author Pedro Ramos, n.º 107348
+* \author Rafael Morgado, n.º 104277
+* \date 06/04/2025
+*/
+
 #ifndef CMD_PROC_H_
 #define CMD_PROC_H_
 
@@ -34,6 +46,10 @@
 /* 		-3: if a CS error is detected (command not executed)    */
 /* 		-4: if string format is wrong                           */
 /* ************************************************************ */
+/**
+ * @brief Processes received commands and generates responses.
+ * @return Status code (0 on success, negative on failure)
+ */
 int cmdProcessor(void);
 
 /* ******************************** */
@@ -43,6 +59,11 @@ int cmdProcessor(void);
 /*  	 0: if success 		        */
 /* 		-1: if buffer full	 	    */
 /* ******************************** */
+/**
+ * @brief Receives a character and stores it in the receive buffer.
+ * @param car Character to receive
+ * @return 0 on success, -1 if buffer is full
+ */
 int rxChar(unsigned char car);
 
 /* ************************************ */
@@ -52,41 +73,74 @@ int rxChar(unsigned char car);
 /*  	 0: if success 		        	*/
 /* 		-1: if buffer full	 	    	*/
 /* ************************************ */
+/**
+ * @brief Transmits a character and stores it in the transmit buffer.
+ * @param car Character to transmit
+ * @return 0 on success, -1 if buffer is full
+ */
 int txChar(unsigned char car);
 
 /* ************************* */
 /* Resets the RX buffer		 */  
 /* ************************* */
+/**
+ * @brief Resets the UART receive buffer.
+ */
 void resetRxBuffer(void);
 
 /* ************************* */
 /* Resets the TX buffer		 */  
 /* ************************* */
+/**
+ * @brief Resets the UART transmit buffer.
+ */
 void resetTxBuffer(void);
 
 /* ************************************************ */
 /* Return the data that would be sent by the sensor */  
 /* ************************************************ */
+/**
+ * @brief Gets the current size of the UART transmit buffer.
+ * @return Number of bytes in the transmit buffer
+ */
 void getTxBuffer(unsigned char * buf, int * len);
 
 /* ************************************************ */
 /* Computes the checksum of a given number of chars */
 /* ************************************************ */ 
+/**
+ * @brief Calculates a checksum for a given data buffer.
+ * @param buf Pointer to data buffer
+ * @param nbytes Number of bytes to process
+ * @return Computed checksum value
+ */
 int calcChecksum(unsigned char * buf, int nbytes);
 
 /* ************************************************ */
 /* Simula a leitura de temperatura do sensor        */
 /* ************************************************ */
+/**
+ * @brief Reads a simulated temperature sensor value.
+ * @return Current temperature reading
+ */
 int readTempSensor(void);
 
 /* ************************************************ */
 /* Simula a leitura da humidade do sensor           */
 /* ************************************************ */
+/**
+ * @brief Reads a simulated humidity sensor value.
+ * @return Current humidity reading
+ */
 int readHumidSensor(void);
 
 /* ************************************************ */
 /* Simula a leitura de CO2 do sensor                */
 /* ************************************************ */
+/**
+ * @brief Reads a simulated CO2 sensor value.
+ * @return Current CO2 reading
+ */
 int readCO2Sensor(void);
 
 /* ************************************************ */
@@ -97,10 +151,18 @@ int transmitInteger(int value, unsigned char *buffer, int *index);
 /* ************************************************ */
 /* Devolve size do buffer rx                        */
 /* ************************************************ */
+/**
+ * @brief Gets the current size of the UART receive buffer.
+ * @return Number of bytes in the receive buffer
+ */
 int getRxBufferSize(void);
 
 /* ************************************************ */
 /* Devolve size do buffer tx                        */
 /* ************************************************ */
+/**
+ * @brief Gets the current size of the UART transmit buffer.
+ * @return Number of bytes in the transmit buffer
+ */
 int getTxBufferSize(void);
 #endif

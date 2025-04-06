@@ -12,15 +12,36 @@
 /*	and it is a good idea to create a makefile			*/
 /*                                                      */
 /* ******************************************************/
+
+
+/** \file main.c
+*   \brief Sample code for Assignment 2
+*
+*        This file utilizes all the funtions on the 
+*       MyDLL module developped for this class
+*
+* \author Pedro Ramos, n.º 107348
+* \author Rafael Morgado, n.º 104277
+* \date 06/04/2025
+*/
+
+
 #include <stdio.h>
 #include <string.h>
 #include "modules/cmdproc.h"
 
 
-int main(void) 
-{
+/**
+ * @brief Main function to execute command processor tests.
+ * @return int Returns 0 upon successful execution.
+ */
+int main(void) {
 	int len;
-	unsigned char ans[256]; 
+	unsigned char ans[256];
+
+	/**
+	* @brief Predefined responses for temperature sensor.
+	*/
 	unsigned char ansTesttemperature[][32] = {
 		{'#','p','t','+','0','0','1','1','1','!'},    // #pt+00111!
 		{'#','p','t','+','1','0','1','1','2','!'},    // #pt+10112!
@@ -30,6 +51,9 @@ int main(void)
 		{'#','p','t','-','5','0','1','1','8','!'},    // #pt-50118!
 		{'#','p','t','+','6','0','1','1','7','!'}     // #pt+60117!
 	};
+	/**
+	* @brief Predefined responses for humidity sensor.
+	*/
 	unsigned char ansTesthumidity[][32] = {
 		{'#','p','h','0','0','0','1','0','4','!'},
 		{'#','p','h','0','1','0','1','0','5','!'},
@@ -39,6 +63,9 @@ int main(void)
 		{'#','p','h','0','8','0','1','1','2','!'},
 		{'#','p','h','1','0','0','1','0','5','!'}
 	};
+	/**
+	* @brief Predefined responses for CO2 sensor.
+	*/
 	unsigned char ansTestco2[][32] = {
 		{'#','p','c','0','0','0','0','0','1','9','5','!'},
 		{'#','p','c','0','0','4','0','0','1','9','9','!'},
