@@ -67,7 +67,7 @@ int cmdProcessor(void) {
             //  Responds as #at+22h020c01000CKS!
             case 'A':
 
-                // Checksum de entrada: apenas sobre CMD ('AL')
+                // Checksum de entrada: apenas sobre CMD ('L')
                 if(!(calcChecksum(&(UARTRxBuffer[i+1]), 1))) {
                     return -3;
                 }
@@ -200,10 +200,6 @@ int cmdProcessor(void) {
                     return -4;
                 }
 
-
-
-
-
                 for (int k = 0; k < chksumIdx; k++) {
                     checksum += checksumBuffer[k];
                 }
@@ -291,6 +287,39 @@ int cmdProcessor(void) {
                 rxBufLen = 0;  // Limpar o buffer de recepção
                 return 0;
 
+
+
+            case 'R':
+                // Checksum de entrada: apenas sobre CMD ('R')
+                if(!(calcChecksum(&(UARTRxBuffer[i+1]), 1))) {
+                    return -3;
+                }
+
+                if(UARTRxBuffer[i+5] != EOF_SYM) {
+                    return -4;
+                }
+
+                checksumBuffer[chksumIdx++] = 'r';
+
+                //  Clear the Temp array
+                memset(lastTempArray, 0, sizeof(lastTempArray));
+                sizeTempArray = 0;
+                //  Clear the Humid array
+                memset(lastHumidArray, 0, sizeof(lastHumidArray));
+                sizeHumidArray = 0;
+                //  Clear the CO2 array
+                memset(lastCO2Array, 0, sizeof(lastCO2Array));
+                sizeCO2Array = 0;
+
+                txChar('#');
+                txChar('r');
+                txChar('1');
+                txChar('1');
+                txChar('4');
+                txChar('!');
+
+                rxBufLen = 0;
+                return 0;
             default:
                 return -2;
         }

@@ -76,12 +76,13 @@ int main(void)
         printf("  ├─> t: Temperature\n");
         printf("  ├─> h: Humidity\n");
         printf("  ├─> c: CO2\n");
+        printf("  ├─> r: Reset History\n");
         printf("  ╰─> q: Sair\n\n");
         printf("   ─> Opção: ");
         scanf(" %c", &option_sensor);
 
         if (option_sensor == 'q') {
-            printf("A sair...\n");
+            printf("Leaving...\n");
             break;
         }
 
@@ -131,7 +132,7 @@ int main(void)
 
 			int numMessages = (ans[2] - '0') * 10 + (ans[3] - '0');
 		
-			printf("Serão precisas %i mensagens.\n", numMessages);
+			printf("\n   ─> Number of messages needed: %i\n", numMessages);
 
 			for (unsigned int messageIdx = 0; messageIdx < numMessages; messageIdx++) {
 				resetRxBuffer();
@@ -156,20 +157,31 @@ int main(void)
                 
                 snprintf(checksumStr, sizeof(checksumStr), "%03d", checksum);
 
+				printf("   ─> Request for Message %d: ", messageIdx);
+
                 rxChar('#');
+				printf("#");
+
                 for (int k = 0; k < chksumIdx; k++) {
                     rxChar(checksumBuffer[k]);
+					printf("%c", checksumBuffer[k]);
                 }
+
                 rxChar(checksumStr[0]);
                 rxChar(checksumStr[1]);
                 rxChar(checksumStr[2]);
                 rxChar('!');
 
+				printf("%c", checksumStr[0]);
+				printf("%c", checksumStr[1]);
+				printf("%c", checksumStr[2]);
+				printf("!\n");
+
 				//  Receive the data from the message and store it
 				cmdProcessor();
 				getTxBuffer(ans, &len);
 	
-				printf("%d - Resposta do sensor: ", messageIdx);
+				printf("   ─> Message %d: ", messageIdx);
 	
 				for (int i = 0; i < len; i++) {
 					printf("%c", ans[i]);
@@ -180,6 +192,27 @@ int main(void)
 
 
 
+		}
+
+        else if (option_sensor == 'r') {
+			rxChar('#');
+			rxChar('R');
+			rxChar('0');
+			rxChar('8');
+			rxChar('2');
+			rxChar('!');
+
+			printf("   ─> Request Message:   #R082!\n");
+		
+			cmdProcessor();
+			getTxBuffer(ans, &len);
+		
+			printf("   ─> Sensor Response:   ");
+			for (int i = 0; i < len; i++) {
+				printf("%c", ans[i]);
+			}
+			printf("\n");
+			printf("\n");
 		}
 
         else if (option_sensor == 't') {
