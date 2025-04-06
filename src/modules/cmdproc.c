@@ -154,8 +154,9 @@ int cmdProcessor(void) {
                 //fprintf(stderr, "HERE0");
 
                 checksumBuffer[chksumIdx++] = sid;
-                checksumBuffer[chksumIdx++] = (sensorValue >= 0) ? '+' : '-';
-
+                if (sid == 't'){
+                 checksumBuffer[chksumIdx++] = (sensorValue >= 0) ? '+' : '-';
+                }
                 // Adicionar o valor do sensor (formatado como string)
                 char sensorStr[12];
                 sprintf(sensorStr, "%02d", abs(sensorValue));
