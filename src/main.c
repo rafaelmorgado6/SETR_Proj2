@@ -20,7 +20,7 @@
 int main(void) 
 {
 	int i,len, err;
-	unsigned char ans[30]; 
+	unsigned char ans[256]; 
 	unsigned char ansTest1[]={'#','p','t', '+', '2', '1', '1', '1', '4','!'};
 	unsigned char ansTesttemperature[][12] = {
 		{'#','p','t','+','0','0','1','1','1','!'},   // #pt+0063!
@@ -50,6 +50,8 @@ int main(void)
 		{'#','p','c','2','0','0','0','0','1','9','7','!'},
 	};
 	int t_count = 0;
+	int h_count = 0;
+	int c_count = 0;
 	
 	printf("\n Smart Sensor interface emulation \n");
 	printf(" \t - simple illustration of interface and use \n\n\r");

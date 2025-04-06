@@ -13,14 +13,20 @@ static unsigned char rxBufLen = 0;
 static unsigned char UARTTxBuffer[UART_TX_SIZE];
 static unsigned char txBufLen = 0; 
 
-static unsigned int possTempArray[] = {0, 10, -10, 30, -25, -50, 60};
+static int possTempArray[] = {0, 10, -10, 30, -25, -50, 60};
 static unsigned int currentTempIndex = 0;
+static int lastTempArray[20];
+static unsigned int sizeTempArray = 0;
 
 static unsigned int possHumidArray[] = {0, 10, 20, 40, 60, 80, 100};
 static unsigned int currentHumidIndex = 0;
+static unsigned int lastHumidArray[20];
+static unsigned int sizeHumidArray = 0;
 
 static unsigned int possCO2Array[] = {0, 400, 1000, 2500, 5000, 10000, 20000};
 static unsigned int currentCO2Index = 0;
+static unsigned int lastCO2Array[20];
+static unsigned int sizeCO2Array = 0;
 
 /* Function implementation */
 
@@ -33,7 +39,7 @@ int cmdProcessor(void) {
 
 
     char sensorStr[12];
-    unsigned char checksumBuffer[32];
+    unsigned char checksumBuffer[256];
     int chksumIdx = 0;
     int checksum = 0;
     char checksumStr[5];
@@ -58,16 +64,16 @@ int cmdProcessor(void) {
             //  Responds as #at+22h020c01000CKS!
             case 'A':
 
-                // Checksum de entrada: apenas sobre CMD ('P') + DATA ('t')
-                if(!(calcChecksum(&(UARTRxBuffer[i+1]), 2))) {
+                // Checksum de entrada: apenas sobre CMD ('AL')
+                if(!(calcChecksum(&(UARTRxBuffer[i+1]), 1))) {
                     return -3;
                 }
 
-                if(UARTRxBuffer[i+6] != EOF_SYM) {
+                if(UARTRxBuffer[i+5] != EOF_SYM) {
                     return -4;
                 }
 
-                checksumBuffer[chksumIdx++] = 'a';
+                checksumBuffer[chksumIdx++] = 'l';
 
 
                 // Simular leitura de sensor
@@ -120,6 +126,72 @@ int cmdProcessor(void) {
                 return 0;
 
 
+            case 'L':
+
+                // Checksum de entrada: apenas sobre CMD ('A')
+                if(!(calcChecksum(&(UARTRxBuffer[i+1]), 1))) {
+                    return -3;
+                }
+
+                if(UARTRxBuffer[i+5] != EOF_SYM) {
+                    return -4;
+                }
+
+                checksumBuffer[chksumIdx++] = 'a';
+
+
+                // Iterate over lastTempArray and print values
+                checksumBuffer[chksumIdx++] = 't';
+                for (unsigned int i = 0; i < sizeTempArray; i++) {
+                    sprintf(sensorStr, "%02d", abs(lastTempArray[i]));
+                    checksumBuffer[chksumIdx++] = (lastTempArray[i] >= 0) ? '+' : '-';
+
+                    for (int k = 0; sensorStr[k] != '\0'; k++) {
+                        checksumBuffer[chksumIdx++] = sensorStr[k];
+                    }
+                }
+
+                // Iterate over lastHumidArray and print values
+                checksumBuffer[chksumIdx++] = 'h';
+                for (unsigned int i = 0; i < sizeHumidArray; i++) {
+                    sprintf(sensorStr, "%03d", abs(lastHumidArray[i]));
+
+                    for (int k = 0; sensorStr[k] != '\0'; k++) {
+                        checksumBuffer[chksumIdx++] = sensorStr[k];
+                    }
+                }
+
+                // Iterate over lastCO2Array and print values
+                checksumBuffer[chksumIdx++] = 'c';
+                for (unsigned int i = 0; i < sizeCO2Array; i++) {
+                    sprintf(sensorStr, "%05d", abs(lastCO2Array[i]));
+
+                    for (int k = 0; sensorStr[k] != '\0'; k++) {
+                        checksumBuffer[chksumIdx++] = sensorStr[k];
+                    }
+                }
+
+                for (int k = 0; k < chksumIdx; k++) {
+                    checksum += checksumBuffer[k];
+                }
+                checksum = checksum % 256;
+                
+                snprintf(checksumStr, sizeof(checksumStr), "%03d", checksum);
+
+                txChar('#');
+                for (int k = 0; k < chksumIdx; k++) {
+                    txChar(checksumBuffer[k]);
+                }
+                txChar(checksumStr[0]);
+                txChar(checksumStr[1]);
+                txChar(checksumStr[2]);
+                txChar('!');
+
+                rxBufLen = 0;
+                return 0;
+
+
+
             case 'P':  
                 sid = UARTRxBuffer[i+2];
 
@@ -136,15 +208,24 @@ int cmdProcessor(void) {
                     return -4;
                 }
 
+                // Adicionar o valor do sensor (formatado como string)
+                char sensorStr[12];
+
+                checksumBuffer[chksumIdx++] = 'p';
+                checksumBuffer[chksumIdx++] = sid;
+
                 // Simular leitura de sensor
                 int sensorValue = 0;
                 if (sid == 't') {
                     sensorValue = readTempSensor();
+                    checksumBuffer[chksumIdx++] = (sensorValue >= 0) ? '+' : '-';
+                    sprintf(sensorStr, "%02d", abs(sensorValue));
                 }
-                if (sid == 'h') {
+                else if (sid == 'h') {
                     sensorValue = readHumidSensor();
+                    sprintf(sensorStr, "%03d", abs(sensorValue));
                 }
-                if (sid == 'c') {
+                else if (sid == 'c') {
                     sensorValue = readCO2Sensor();
                 }
 
@@ -197,6 +278,19 @@ int readTempSensor() {
         currentTempIndex = 0;
     }
     int currentTemp = possTempArray[currentTempIndex++];
+    
+    //  If there is space in the history array
+    if (sizeTempArray < 20) {
+        lastTempArray[sizeTempArray++] = currentTemp;
+    } 
+    //  Shift values in lastTempArray to make space for the new value
+    else {
+        for (int i = 1; i < 20; i++) {
+            lastTempArray[i - 1] = lastTempArray[i];
+        }
+        lastTempArray[19] = currentTemp;
+    }
+
     return currentTemp;
 }
 
@@ -206,6 +300,19 @@ int readHumidSensor() {
         currentHumidIndex = 0;
     }
     int currentHumid = possHumidArray[currentHumidIndex++];
+    
+    //  If there is space in the history array
+    if (sizeHumidArray < 20) {
+        lastHumidArray[sizeHumidArray++] = currentHumid;
+    } 
+    //  Shift values in lastHumidArray to make space for the new value
+    else {
+        for (int i = 1; i < 20; i++) {
+            lastHumidArray[i - 1] = lastHumidArray[i];
+        }
+        lastHumidArray[19] = currentHumid;
+    }
+
     return currentHumid;
 }
     
@@ -215,6 +322,19 @@ int readCO2Sensor() {
         currentCO2Index = 0;
     }
     int currentCO2 = possCO2Array[currentCO2Index++];
+    
+    //  If there is space in the history array
+    if (sizeCO2Array < 20) {
+        lastCO2Array[sizeCO2Array++] = currentCO2;
+    } 
+    //  Shift values in lastCO2Array to make space for the new value
+    else {
+        for (int i = 1; i < 20; i++) {
+            lastCO2Array[i - 1] = lastCO2Array[i];
+        }
+        lastCO2Array[19] = currentCO2;
+    }
+
     return currentCO2;
 }
 
@@ -240,8 +360,8 @@ int rxChar(unsigned char car)
     if (rxBufLen < UART_RX_SIZE) {
         UARTRxBuffer[rxBufLen] = car;
         rxBufLen += 1;
-        return 0;        
-    }    
+        return 0;
+    }
     return -1;
 }
 
@@ -250,8 +370,8 @@ int txChar(unsigned char car)
     if (txBufLen < UART_TX_SIZE) {
         UARTTxBuffer[txBufLen] = car;
         txBufLen += 1;
-        return 0;        
-    }    
+        return 0;
+    }
     return -1;
 }
 
