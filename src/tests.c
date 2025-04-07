@@ -216,6 +216,8 @@ void test_all(void){
 
     unsigned char ansTest[32] = {'#','a','t','+','6','0','h','1','0','0','c','2','0','0','0','0','1','8','0','!'};
 
+    resetTxBuffer();
+    resetRxBuffer();
     rxChar('#');
     rxChar('A');
     rxChar('0');
@@ -270,7 +272,8 @@ void test_history(void){
     };
         
     
-
+    resetTxBuffer();
+    resetRxBuffer();
     rxChar('#');
     rxChar('L');
     rxChar('0');
@@ -355,6 +358,8 @@ void test_reset(void){
     unsigned char ansTest[32] = {'#','r','1','1','4','!'};
     unsigned char ansMessage[32] = {'#','l','0','0','2','0','4','!'};
 
+    resetTxBuffer();
+    resetRxBuffer();
     rxChar('#');
     rxChar('R');
     rxChar('0');
@@ -433,6 +438,8 @@ void test_invalidcommand(void){
     printf(" │  - == ===  Test invalid command  === == -   │\n");
     printf(" ╰─────────────────────────────────────────────╯\n");
 
+    resetTxBuffer();
+    resetRxBuffer();
     rxChar('#');
     rxChar('X'); // invalid command
     rxChar('t');
@@ -499,6 +506,8 @@ void test_reset_buffers(void){
     printf(" │  - == ===  Test  reset buffers   === == -   │\n");
     printf(" ╰─────────────────────────────────────────────╯\n");
     
+    resetTxBuffer();
+    resetRxBuffer();
     rxChar('#');
     rxChar('P');
     rxChar('t');
@@ -531,6 +540,8 @@ void test_incomplete_command(void) {
     printf(" │ - = =Test missing character in command= = - │\n");
     printf(" ╰─────────────────────────────────────────────╯\n");
     
+    resetTxBuffer();
+    resetRxBuffer();
     // 1 - Envia o comando
     rxChar('#');
     rxChar('P');
@@ -551,6 +562,138 @@ void test_incomplete_command(void) {
     TEST_ASSERT_EQUAL(-2, err);
 }
 
+
+/**
+ * @brief Test buffer overflow in RX buffer.
+ */
+ void test_RxBufferOverflow(void) {
+    printf("\n");
+    printf(" ╭─────────────────────────────────────────────╮\n");
+    printf(" │  - == ===   Test RX Buffer Overflow === == -│\n");
+    printf(" ╰─────────────────────────────────────────────╯\n");
+    
+    // Fill buffer to capacity (should succeed)
+    for (int i = 0; i < UART_RX_SIZE; i++) {
+        TEST_ASSERT_EQUAL(0, rxChar('A'));
+    }
+    
+    // Next character should fail (buffer full)
+    TEST_ASSERT_EQUAL(-1, rxChar('B'));
+    
+    // Verify buffer size
+    TEST_ASSERT_EQUAL(UART_RX_SIZE, getRxBufferSize());
+    
+    resetRxBuffer();
+    printf("   ─> Test passed: RX buffer overflow handled correctly\n\n");
+}
+
+/**
+ * @brief Test buffer overflow in TX buffer.
+ */
+void test_TxBufferOverflow(void) {
+    printf("\n");
+    printf(" ╭─────────────────────────────────────────────╮\n");
+    printf(" │  - == ===   Test TX Buffer Overflow === == -│\n");
+    printf(" ╰─────────────────────────────────────────────╯\n");
+    
+    // Fill buffer to capacity (should succeed)
+    for (int i = 0; i < UART_TX_SIZE; i++) {
+        TEST_ASSERT_EQUAL(0, txChar('A'));
+    }
+    
+    // Next character should fail (buffer full)
+    TEST_ASSERT_EQUAL(-1, txChar('B'));
+    
+    // Verify buffer size
+    TEST_ASSERT_EQUAL(UART_TX_SIZE, getTxBufferSize());
+    
+    resetTxBuffer();
+    printf("   ─> Test passed: TX buffer overflow handled correctly\n\n");
+}
+
+/**
+ * @brief Test command with invalid checksum.
+ */
+void test_InvalidChecksum(void) {
+    printf("\n");
+    printf(" ╭─────────────────────────────────────────────╮\n");
+    printf(" │  - == ===  Test Invalid Checksum  === == -  │\n");
+    printf(" ╰─────────────────────────────────────────────╯\n");
+    
+    resetTxBuffer();
+    resetRxBuffer();
+    // Send command with invalid checksum (changed last digit)
+    rxChar('#');
+    rxChar('P');
+    rxChar('t');
+    rxChar('1');
+    rxChar('9');
+    rxChar('7'); // Changed from 6 to 7 to make checksum invalid
+    rxChar('!');
+
+    int result = cmdProcessor();
+    printf("   ─> cmdProcessor returned -> %d\n\n", result);
+    
+    // Should return -3 (checksum error)
+    TEST_ASSERT_EQUAL(-3, result);
+    
+    printf("   ─> Test passed: Invalid checksum detected\n\n");
+}
+
+/**
+ * @brief Test command missing EOF symbol.
+ */
+void test_MissingEOF(void) {
+    printf("\n");
+    printf(" ╭─────────────────────────────────────────────╮\n");
+    printf(" │  - == ===    Test Missing EOF     === == -  │\n");
+    printf(" ╰─────────────────────────────────────────────╯\n");
+    
+    resetTxBuffer();
+    resetRxBuffer();
+    // Send command without '!'
+    rxChar('#');
+    rxChar('P');
+    rxChar('t');
+    rxChar('1');
+    rxChar('9');
+    rxChar('6'); // Missing '!'
+
+    int result = cmdProcessor();
+    printf("   ─> cmdProcessor returned -> %d\n\n", result);
+    
+    // Should return -4 (format error)
+    TEST_ASSERT_EQUAL(-4, result);
+    
+    printf("   ─> Test passed: Missing EOF detected\n\n");
+}
+
+/**
+ * @brief Test lowercase command handling
+ */
+void test_LowercaseCommands(void) {
+    printf("\n");
+    printf(" ╭─────────────────────────────────────────────╮\n");
+    printf(" │  - == === Test Lowercase Commands  === == - │\n");
+    printf(" ╰─────────────────────────────────────────────╯\n");
+
+    // Try lowercase 'p' instead of 'P'
+    rxChar('#');
+    rxChar('p'); // Lowercase
+    rxChar('t');
+    rxChar('1');
+    rxChar('9');
+    rxChar('6');
+    rxChar('!');
+
+    int result = cmdProcessor();
+    printf("   ─> cmdProcessor returned: %d\n", result);
+    
+    // Should reject lowercase commands
+    TEST_ASSERT_EQUAL(-2, result); 
+    printf("   ─> Test passed: Lowercase commands rejected\n\n");
+}
+
 int main(void){
 
     // inicia a Unity
@@ -568,6 +711,13 @@ int main(void){
     RUN_TEST(test_calcChecksum_invalid);
     RUN_TEST(test_reset_buffers);
     RUN_TEST(test_incomplete_command);
+    
+    // New tests
+    RUN_TEST(test_RxBufferOverflow);
+    RUN_TEST(test_TxBufferOverflow);
+    RUN_TEST(test_InvalidChecksum);
+    RUN_TEST(test_MissingEOF);
+    RUN_TEST(test_LowercaseCommands);
 
     // finaliza e retorna os resultados
     return UNITY_END();

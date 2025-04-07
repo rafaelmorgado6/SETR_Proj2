@@ -74,15 +74,23 @@ int cmdProcessor(void) {
     /* If a SOF was found, look for commands */
     if(i < rxBufLen) {
         
+
+        int msgCheckSum = atoi(UARTRxBuffer + strlen(UARTRxBuffer) - 4);
+
+        if(UARTRxBuffer[rxBufLen-1] != EOF_SYM) {
+            return -4;
+        }
+
         switch(UARTRxBuffer[i+1]) { 
             
             //  Responds as #at+22h020c01000CKS!
             case 'A':
 
                 // Checksum de entrada: apenas sobre CMD ('L')
-                if(!(calcChecksum(&(UARTRxBuffer[i+1]), 1))) {
+                if(calcChecksum(&(UARTRxBuffer[i+1]), rxBufLen - 5) != msgCheckSum) {
                     return -3;
                 }
+
 
                 if(UARTRxBuffer[i+5] != EOF_SYM) {
                     return -4;
@@ -144,10 +152,9 @@ int cmdProcessor(void) {
             case 'L':
 
                 // Checksum de entrada: apenas sobre CMD ('L')
-                if(!(calcChecksum(&(UARTRxBuffer[i+1]), 1))) {
+                if(calcChecksum(&(UARTRxBuffer[i+1]), rxBufLen - 5) != msgCheckSum) {
                     return -3;
                 }
-
 
                 //  Smaller message that asks how many messages are needed to transmit the data
                 if(UARTRxBuffer[i+5] == EOF_SYM) {
@@ -250,8 +257,10 @@ int cmdProcessor(void) {
                     return -2;
                 }
 
+                printf("%s", UARTRxBuffer);
+
                 // Checksum de entrada: apenas sobre CMD ('P') + DATA ('t')
-                if(!(calcChecksum(&(UARTRxBuffer[i+1]), 2))) {
+                if(calcChecksum(&(UARTRxBuffer[i+1]), rxBufLen - 5) != msgCheckSum) {
                     return -3;
                 }
 
@@ -309,7 +318,7 @@ int cmdProcessor(void) {
 
             case 'R':
                 // Checksum de entrada: apenas sobre CMD ('R')
-                if(!(calcChecksum(&(UARTRxBuffer[i+1]), 1))) {
+                if(calcChecksum(&(UARTRxBuffer[i+1]), rxBufLen - 5) != msgCheckSum) {
                     return -3;
                 }
 
@@ -432,7 +441,6 @@ int calcChecksum(unsigned char *buf, int nbytes) {
 
     // Soma dos valores dos bytes do buffer
     for (int i = 0; i < nbytes; i++) {
-        //printf("\nbuff: %c\n", buf[i]);
         checksum += buf[i];
     }
 
@@ -476,17 +484,17 @@ int txChar(unsigned char car)
 /**
  * @brief Resets the UART receive buffer.
  */
-void resetRxBuffer(void)
-{
-    rxBufLen = 0;        
+void resetRxBuffer(void) {
+    rxBufLen = 0;
+    memset(UARTRxBuffer, 0, sizeof(UARTRxBuffer));
 }
 
 /**
  * @brief Resets the UART transmit buffer.
  */
-void resetTxBuffer(void)
-{
-    txBufLen = 0;        
+void resetTxBuffer(void) {
+    txBufLen = 0;
+    memset(UARTTxBuffer, 0, sizeof(UARTTxBuffer));
 }
 
 /**
