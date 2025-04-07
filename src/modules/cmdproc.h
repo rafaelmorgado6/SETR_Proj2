@@ -144,11 +144,6 @@ int readHumidSensor(void);
 int readCO2Sensor(void);
 
 /* ************************************************ */
-/* Transmite um inteiro como uma string no buffer   */
-/* ************************************************ */
-int transmitInteger(int value, unsigned char *buffer, int *index);
-
-/* ************************************************ */
 /* Devolve size do buffer rx                        */
 /* ************************************************ */
 /**

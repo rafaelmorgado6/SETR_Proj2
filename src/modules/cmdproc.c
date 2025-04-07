@@ -1,3 +1,14 @@
+/** \file cmdproc.h
+*   \brief Base code for Unit Testing
+*
+*        Simple example of command processor 
+*       for a smart sensor node with 3 sensors.
+*
+* \author Pedro Ramos, n.º 107348
+* \author Rafael Morgado, n.º 104277
+* \date 06/04/2025
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
@@ -33,9 +44,10 @@ static unsigned char historyLIdx = 0;
 
 /* Function implementation */
 
-/* 
- * cmdProcessor
- */ 
+/**
+ * @brief Processes received commands and generates responses.
+ * @return Status code (0 on success, negative on failure)
+ */
 int cmdProcessor(void) {
     int i;
     unsigned char sid;
@@ -334,7 +346,10 @@ int cmdProcessor(void) {
     return -4;
 }
 
-
+/**
+ * @brief Reads a simulated temperature sensor value.
+ * @return Current temperature reading
+ */
 int readTempSensor() {
     if (currentTempIndex >= sizeof(possTempArray) / sizeof(int)) {
         currentTempIndex = 0;
@@ -356,7 +371,10 @@ int readTempSensor() {
     return currentTemp;
 }
 
-
+/**
+ * @brief Reads a simulated humidity sensor value.
+ * @return Current humidity reading
+ */
 int readHumidSensor() {
     if (currentHumidIndex >= sizeof(possHumidArray) / sizeof(int)) {
         currentHumidIndex = 0;
@@ -378,7 +396,10 @@ int readHumidSensor() {
     return currentHumid;
 }
     
-
+/**
+ * @brief Reads a simulated CO2 sensor value.
+ * @return Current CO2 reading
+ */
 int readCO2Sensor() {
     if (currentCO2Index >= sizeof(possCO2Array) / sizeof(int)) {
         currentCO2Index = 0;
@@ -400,6 +421,12 @@ int readCO2Sensor() {
     return currentCO2;
 }
 
+/**
+ * @brief Calculates a checksum for a given data buffer.
+ * @param buf Pointer to data buffer
+ * @param nbytes Number of bytes to process
+ * @return Computed checksum value
+ */
 int calcChecksum(unsigned char *buf, int nbytes) {
     unsigned int checksum = 0;
 
@@ -416,7 +443,11 @@ int calcChecksum(unsigned char *buf, int nbytes) {
     return checksum;
 }
 
-
+/**
+ * @brief Receives a character and stores it in the receive buffer.
+ * @param car Character to receive
+ * @return 0 on success, -1 if buffer is full
+ */
 int rxChar(unsigned char car)
 {
     if (rxBufLen < UART_RX_SIZE) {
@@ -427,6 +458,11 @@ int rxChar(unsigned char car)
     return -1;
 }
 
+/**
+ * @brief Transmits a character and stores it in the transmit buffer.
+ * @param car Character to transmit
+ * @return 0 on success, -1 if buffer is full
+ */
 int txChar(unsigned char car)
 {
     if (txBufLen < UART_TX_SIZE) {
@@ -437,16 +473,26 @@ int txChar(unsigned char car)
     return -1;
 }
 
+/**
+ * @brief Resets the UART receive buffer.
+ */
 void resetRxBuffer(void)
 {
     rxBufLen = 0;        
 }
 
+/**
+ * @brief Resets the UART transmit buffer.
+ */
 void resetTxBuffer(void)
 {
     txBufLen = 0;        
 }
 
+/**
+ * @brief Gets the current size of the UART transmit buffer.
+ * @return Number of bytes in the transmit buffer
+ */
 void getTxBuffer(unsigned char * buf, int * len)
 {
     *len = txBufLen;
@@ -456,10 +502,18 @@ void getTxBuffer(unsigned char * buf, int * len)
     return;
 }
 
+/**
+ * @brief Gets the current size of the UART receive buffer.
+ * @return Number of bytes in the receive buffer
+ */
 int getRxBufferSize(void){
     return rxBufLen;
 }
 
+/**
+ * @brief Gets the current size of the UART transmit buffer.
+ * @return Number of bytes in the transmit buffer
+ */
 int getTxBufferSize(void){
     return txBufLen;
 }

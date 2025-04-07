@@ -1,0 +1,197 @@
+\doxysection{src/tests.c File Reference}
+\hypertarget{tests_8c}{}\label{tests_8c}\index{src/tests.c@{src/tests.c}}
+
+
+Unit tests for Assignment 2.  
+
+
+{\ttfamily \#include "{}Unity/src/unity.\+h"{}}\newline
+{\ttfamily \#include "{}modules/cmdproc.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{tests_8c_a95c834d6178047ce9e1bce7cbfea2836}{set\+Up}} (void)
+\begin{DoxyCompactList}\small\item\em Set up function executed before each test. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_a9909011e5fea0c018842eec4d93d0662}{tear\+Down}} (void)
+\begin{DoxyCompactList}\small\item\em Tear down function executed after each test. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_ad6a2a6a8a26db470e1dacc2268f8814a}{test\+\_\+\+Temperature}} (void)
+\begin{DoxyCompactList}\small\item\em Test the temperature command processor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_a58488b05f33df9ced07cc262953dc5b5}{test\+\_\+\+Humidity}} (void)
+\begin{DoxyCompactList}\small\item\em Test the humidity command processor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_a7e6e7ea47704ae6228eb0afbc65de9cb}{test\+\_\+\+CO2}} (void)
+\begin{DoxyCompactList}\small\item\em Test the CO2 command processor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_add1fe75ad79de762a3906b6d41897ff2}{test\+\_\+all}} (void)
+\begin{DoxyCompactList}\small\item\em Test the "{}all"{} command processor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_a3d5c3b34cc0fc45a2e4a03120066f954}{test\+\_\+history}} (void)
+\begin{DoxyCompactList}\small\item\em Test the history command processor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_a08b6f3ea6b85fe8c915ac0fc67ba253b}{test\+\_\+reset}} (void)
+\begin{DoxyCompactList}\small\item\em Test the reset command processor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_a7bb76b938632e99c6e11af18d00f046e}{test\+\_\+invalidcommand}} (void)
+\begin{DoxyCompactList}\small\item\em Test an invalid command. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_a52407f65282cd9dec537849dcf325895}{test\+\_\+calc\+Checksum\+\_\+valid}} (void)
+\begin{DoxyCompactList}\small\item\em Test checksum calculation with valid data. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_a6e294ac3b31f115e762b65d4637e2f56}{test\+\_\+calc\+Checksum\+\_\+invalid}} (void)
+\begin{DoxyCompactList}\small\item\em Test checksum calculation with invalid data. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_adc8c367473d3ba4ab6968ba58788a739}{test\+\_\+reset\+\_\+buffers}} (void)
+\begin{DoxyCompactList}\small\item\em Test reset of buffers. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tests_8c_ae054af067169bdad766ecc251a1c4ae4}{test\+\_\+incomplete\+\_\+command}} (void)
+\begin{DoxyCompactList}\small\item\em Test for missing characters in the command. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{tests_8c_a840291bc02cba5474a4cb46a9b9566fe}{main}} (void)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Unit tests for Assignment 2. 
+
+\begin{DoxyVerb} This file tests all the funtions on the 
+CMD_Proc module developped for this assignment
+\end{DoxyVerb}
+
+
+\begin{DoxyAuthor}{Author}
+Pedro Ramos, n.\+º 107348 
+
+Rafael Morgado, n.\+º 104277 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+06/04/2025 
+\end{DoxyDate}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{tests_8c_a840291bc02cba5474a4cb46a9b9566fe}\index{tests.c@{tests.c}!main@{main}}
+\index{main@{main}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{tests_8c_a840291bc02cba5474a4cb46a9b9566fe} 
+int main (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{tests_8c_a95c834d6178047ce9e1bce7cbfea2836}\index{tests.c@{tests.c}!setUp@{setUp}}
+\index{setUp@{setUp}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{setUp()}{setUp()}}
+{\footnotesize\ttfamily \label{tests_8c_a95c834d6178047ce9e1bce7cbfea2836} 
+void set\+Up (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Set up function executed before each test. 
+
+\Hypertarget{tests_8c_a9909011e5fea0c018842eec4d93d0662}\index{tests.c@{tests.c}!tearDown@{tearDown}}
+\index{tearDown@{tearDown}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{tearDown()}{tearDown()}}
+{\footnotesize\ttfamily \label{tests_8c_a9909011e5fea0c018842eec4d93d0662} 
+void tear\+Down (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Tear down function executed after each test. 
+
+\Hypertarget{tests_8c_add1fe75ad79de762a3906b6d41897ff2}\index{tests.c@{tests.c}!test\_all@{test\_all}}
+\index{test\_all@{test\_all}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_all()}{test\_all()}}
+{\footnotesize\ttfamily \label{tests_8c_add1fe75ad79de762a3906b6d41897ff2} 
+void test\+\_\+all (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test the "{}all"{} command processor. 
+
+\Hypertarget{tests_8c_a6e294ac3b31f115e762b65d4637e2f56}\index{tests.c@{tests.c}!test\_calcChecksum\_invalid@{test\_calcChecksum\_invalid}}
+\index{test\_calcChecksum\_invalid@{test\_calcChecksum\_invalid}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_calcChecksum\_invalid()}{test\_calcChecksum\_invalid()}}
+{\footnotesize\ttfamily \label{tests_8c_a6e294ac3b31f115e762b65d4637e2f56} 
+void test\+\_\+calc\+Checksum\+\_\+invalid (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test checksum calculation with invalid data. 
+
+\Hypertarget{tests_8c_a52407f65282cd9dec537849dcf325895}\index{tests.c@{tests.c}!test\_calcChecksum\_valid@{test\_calcChecksum\_valid}}
+\index{test\_calcChecksum\_valid@{test\_calcChecksum\_valid}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_calcChecksum\_valid()}{test\_calcChecksum\_valid()}}
+{\footnotesize\ttfamily \label{tests_8c_a52407f65282cd9dec537849dcf325895} 
+void test\+\_\+calc\+Checksum\+\_\+valid (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test checksum calculation with valid data. 
+
+\Hypertarget{tests_8c_a7e6e7ea47704ae6228eb0afbc65de9cb}\index{tests.c@{tests.c}!test\_CO2@{test\_CO2}}
+\index{test\_CO2@{test\_CO2}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_CO2()}{test\_CO2()}}
+{\footnotesize\ttfamily \label{tests_8c_a7e6e7ea47704ae6228eb0afbc65de9cb} 
+void test\+\_\+\+CO2 (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test the CO2 command processor. 
+
+\Hypertarget{tests_8c_a3d5c3b34cc0fc45a2e4a03120066f954}\index{tests.c@{tests.c}!test\_history@{test\_history}}
+\index{test\_history@{test\_history}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_history()}{test\_history()}}
+{\footnotesize\ttfamily \label{tests_8c_a3d5c3b34cc0fc45a2e4a03120066f954} 
+void test\+\_\+history (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test the history command processor. 
+
+\Hypertarget{tests_8c_a58488b05f33df9ced07cc262953dc5b5}\index{tests.c@{tests.c}!test\_Humidity@{test\_Humidity}}
+\index{test\_Humidity@{test\_Humidity}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_Humidity()}{test\_Humidity()}}
+{\footnotesize\ttfamily \label{tests_8c_a58488b05f33df9ced07cc262953dc5b5} 
+void test\+\_\+\+Humidity (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test the humidity command processor. 
+
+\Hypertarget{tests_8c_ae054af067169bdad766ecc251a1c4ae4}\index{tests.c@{tests.c}!test\_incomplete\_command@{test\_incomplete\_command}}
+\index{test\_incomplete\_command@{test\_incomplete\_command}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_incomplete\_command()}{test\_incomplete\_command()}}
+{\footnotesize\ttfamily \label{tests_8c_ae054af067169bdad766ecc251a1c4ae4} 
+void test\+\_\+incomplete\+\_\+command (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test for missing characters in the command. 
+
+\Hypertarget{tests_8c_a7bb76b938632e99c6e11af18d00f046e}\index{tests.c@{tests.c}!test\_invalidcommand@{test\_invalidcommand}}
+\index{test\_invalidcommand@{test\_invalidcommand}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_invalidcommand()}{test\_invalidcommand()}}
+{\footnotesize\ttfamily \label{tests_8c_a7bb76b938632e99c6e11af18d00f046e} 
+void test\+\_\+invalidcommand (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test an invalid command. 
+
+\Hypertarget{tests_8c_a08b6f3ea6b85fe8c915ac0fc67ba253b}\index{tests.c@{tests.c}!test\_reset@{test\_reset}}
+\index{test\_reset@{test\_reset}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_reset()}{test\_reset()}}
+{\footnotesize\ttfamily \label{tests_8c_a08b6f3ea6b85fe8c915ac0fc67ba253b} 
+void test\+\_\+reset (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test the reset command processor. 
+
+\Hypertarget{tests_8c_adc8c367473d3ba4ab6968ba58788a739}\index{tests.c@{tests.c}!test\_reset\_buffers@{test\_reset\_buffers}}
+\index{test\_reset\_buffers@{test\_reset\_buffers}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_reset\_buffers()}{test\_reset\_buffers()}}
+{\footnotesize\ttfamily \label{tests_8c_adc8c367473d3ba4ab6968ba58788a739} 
+void test\+\_\+reset\+\_\+buffers (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test reset of buffers. 
+
+\Hypertarget{tests_8c_ad6a2a6a8a26db470e1dacc2268f8814a}\index{tests.c@{tests.c}!test\_Temperature@{test\_Temperature}}
+\index{test\_Temperature@{test\_Temperature}!tests.c@{tests.c}}
+\doxysubsubsection{\texorpdfstring{test\_Temperature()}{test\_Temperature()}}
+{\footnotesize\ttfamily \label{tests_8c_ad6a2a6a8a26db470e1dacc2268f8814a} 
+void test\+\_\+\+Temperature (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test the temperature command processor. 
+
