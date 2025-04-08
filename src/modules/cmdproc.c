@@ -1,14 +1,3 @@
-/** \file cmdproc.h
-*   \brief Base code for Unit Testing
-*
-*        Simple example of command processor 
-*       for a smart sensor node with 3 sensors.
-*
-* \author Pedro Ramos, n.º 107348
-* \author Rafael Morgado, n.º 104277
-* \date 06/04/2025
-*/
-
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
