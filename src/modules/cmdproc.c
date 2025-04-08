@@ -44,10 +44,6 @@ static unsigned char historyLIdx = 0;
 
 /* Function implementation */
 
-/**
- * @brief Processes received commands and generates responses.
- * @return Status code (0 on success, negative on failure)
- */
 int cmdProcessor(void) {
     int i;
     unsigned char sid;
@@ -99,7 +95,6 @@ int cmdProcessor(void) {
                 checksumBuffer[chksumIdx++] = 'a';
 
 
-                // Simular leitura de sensor
                 int sensorValueT = readTempSensor();
                 int sensorValueH = readHumidSensor();
                 int sensorValueC = readCO2Sensor();
@@ -295,13 +290,13 @@ int cmdProcessor(void) {
                     checksumBuffer[chksumIdx++] = sensorStr[k];
                 }
 
-                // Calcular o checksum com base no buffer completo
+                // Calcular o cheksum com base no buffer completo
                 checksum = calcChecksum(checksumBuffer, chksumIdx);
 
                 // Formatar o checksum como uma string de 3 caracteres
                 snprintf(checksumStr, sizeof(checksumStr), "%03d", checksum);
 
-                // Enviar a resposta
+                // Enviar a  resposta
                 txChar('#');
                 for (int k = 0; k < chksumIdx; k++) {
                     txChar(checksumBuffer[k]);
@@ -311,7 +306,7 @@ int cmdProcessor(void) {
                 txChar(checksumStr[2]);
                 txChar('!');
 
-                rxBufLen = 0;  // Limpar o buffer de recepção
+                rxBufLen = 0;  // clean buffer
                 return 0;
 
 
@@ -355,10 +350,6 @@ int cmdProcessor(void) {
     return -4;
 }
 
-/**
- * @brief Reads a simulated temperature sensor value.
- * @return Current temperature reading
- */
 int readTempSensor() {
     if (currentTempIndex >= sizeof(possTempArray) / sizeof(int)) {
         currentTempIndex = 0;
@@ -380,10 +371,6 @@ int readTempSensor() {
     return currentTemp;
 }
 
-/**
- * @brief Reads a simulated humidity sensor value.
- * @return Current humidity reading
- */
 int readHumidSensor() {
     if (currentHumidIndex >= sizeof(possHumidArray) / sizeof(int)) {
         currentHumidIndex = 0;
@@ -404,11 +391,7 @@ int readHumidSensor() {
 
     return currentHumid;
 }
-    
-/**
- * @brief Reads a simulated CO2 sensor value.
- * @return Current CO2 reading
- */
+
 int readCO2Sensor() {
     if (currentCO2Index >= sizeof(possCO2Array) / sizeof(int)) {
         currentCO2Index = 0;
@@ -430,12 +413,6 @@ int readCO2Sensor() {
     return currentCO2;
 }
 
-/**
- * @brief Calculates a checksum for a given data buffer.
- * @param buf Pointer to data buffer
- * @param nbytes Number of bytes to process
- * @return Computed checksum value
- */
 int calcChecksum(unsigned char *buf, int nbytes) {
     unsigned int checksum = 0;
 
@@ -451,11 +428,6 @@ int calcChecksum(unsigned char *buf, int nbytes) {
     return checksum;
 }
 
-/**
- * @brief Receives a character and stores it in the receive buffer.
- * @param car Character to receive
- * @return 0 on success, -1 if buffer is full
- */
 int rxChar(unsigned char car)
 {
     if (rxBufLen < UART_RX_SIZE) {
@@ -466,11 +438,6 @@ int rxChar(unsigned char car)
     return -1;
 }
 
-/**
- * @brief Transmits a character and stores it in the transmit buffer.
- * @param car Character to transmit
- * @return 0 on success, -1 if buffer is full
- */
 int txChar(unsigned char car)
 {
     if (txBufLen < UART_TX_SIZE) {
@@ -481,26 +448,16 @@ int txChar(unsigned char car)
     return -1;
 }
 
-/**
- * @brief Resets the UART receive buffer.
- */
 void resetRxBuffer(void) {
     rxBufLen = 0;
     memset(UARTRxBuffer, 0, sizeof(UARTRxBuffer));
 }
 
-/**
- * @brief Resets the UART transmit buffer.
- */
 void resetTxBuffer(void) {
     txBufLen = 0;
     memset(UARTTxBuffer, 0, sizeof(UARTTxBuffer));
 }
 
-/**
- * @brief Gets the current size of the UART transmit buffer.
- * @return Number of bytes in the transmit buffer
- */
 void getTxBuffer(unsigned char * buf, int * len)
 {
     *len = txBufLen;
@@ -510,18 +467,10 @@ void getTxBuffer(unsigned char * buf, int * len)
     return;
 }
 
-/**
- * @brief Gets the current size of the UART receive buffer.
- * @return Number of bytes in the receive buffer
- */
 int getRxBufferSize(void){
     return rxBufLen;
 }
 
-/**
- * @brief Gets the current size of the UART transmit buffer.
- * @return Number of bytes in the transmit buffer
- */
 int getTxBufferSize(void){
     return txBufLen;
 }

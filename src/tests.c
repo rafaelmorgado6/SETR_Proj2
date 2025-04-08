@@ -1,3 +1,4 @@
+//gcc tests.c modules/cmdproc.c Unity/src/unity.c -o test
 #include "Unity/src/unity.h"
 #include "modules/cmdproc.h"
 

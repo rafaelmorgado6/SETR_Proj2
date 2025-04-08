@@ -7,7 +7,7 @@
 /* Note that I'm not using Unity! That is part of your 	*/
 /*		work. 											*/
 /*                                                      */
-/* Compile with: gcc cmdproc.c main.c -o main           */
+/* Compile with: gcc modules/cmdproc.c main.c -o main   */
 /*	Feel free to use flags such as -Wall -Wpedantic ...	*/
 /*	and it is a good idea to create a makefile			*/
 /*                                                      */
