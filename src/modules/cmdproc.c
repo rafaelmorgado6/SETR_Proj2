@@ -241,7 +241,6 @@ int cmdProcessor(void) {
                     return -2;
                 }
 
-                printf("%s", UARTRxBuffer);
 
                 // Checksum de entrada: apenas sobre CMD ('P') + DATA ('t')
                 if(calcChecksum(&(UARTRxBuffer[i+1]), rxBufLen - 5) != msgCheckSum) {
