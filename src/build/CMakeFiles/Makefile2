@@ -63,99 +63,74 @@ CMAKE_BINARY_DIR = /home/pramos/Documents/Univ/SETR_Proj2/src/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/cmdproc.dir/all
-all: CMakeFiles/unity.dir/all
 all: CMakeFiles/main.dir/all
 all: CMakeFiles/tests.dir/all
+all: modules/all
+all: Unity/all
 .PHONY : all
 
 # The main recursive "codegen" target.
-codegen: CMakeFiles/cmdproc.dir/codegen
-codegen: CMakeFiles/unity.dir/codegen
 codegen: CMakeFiles/main.dir/codegen
 codegen: CMakeFiles/tests.dir/codegen
+codegen: modules/codegen
+codegen: Unity/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
-preinstall:
+preinstall: modules/preinstall
+preinstall: Unity/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/cmdproc.dir/clean
-clean: CMakeFiles/unity.dir/clean
 clean: CMakeFiles/main.dir/clean
 clean: CMakeFiles/tests.dir/clean
+clean: modules/clean
+clean: Unity/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/cmdproc.dir
+# Directory level rules for directory Unity
 
-# All Build rule for target.
-CMakeFiles/cmdproc.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmdproc.dir/build.make CMakeFiles/cmdproc.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmdproc.dir/build.make CMakeFiles/cmdproc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=1,2 "Built target cmdproc"
-.PHONY : CMakeFiles/cmdproc.dir/all
+# Recursive "all" directory target.
+Unity/all: Unity/CMakeFiles/unity.dir/all
+.PHONY : Unity/all
 
-# Build rule for subdir invocation for target.
-CMakeFiles/cmdproc.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cmdproc.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles 0
-.PHONY : CMakeFiles/cmdproc.dir/rule
+# Recursive "codegen" directory target.
+Unity/codegen: Unity/CMakeFiles/unity.dir/codegen
+.PHONY : Unity/codegen
 
-# Convenience name for target.
-cmdproc: CMakeFiles/cmdproc.dir/rule
-.PHONY : cmdproc
+# Recursive "preinstall" directory target.
+Unity/preinstall:
+.PHONY : Unity/preinstall
 
-# codegen rule for target.
-CMakeFiles/cmdproc.dir/codegen:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmdproc.dir/build.make CMakeFiles/cmdproc.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=1,2 "Finished codegen for target cmdproc"
-.PHONY : CMakeFiles/cmdproc.dir/codegen
-
-# clean rule for target.
-CMakeFiles/cmdproc.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmdproc.dir/build.make CMakeFiles/cmdproc.dir/clean
-.PHONY : CMakeFiles/cmdproc.dir/clean
+# Recursive "clean" directory target.
+Unity/clean: Unity/CMakeFiles/unity.dir/clean
+.PHONY : Unity/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/unity.dir
+# Directory level rules for directory modules
 
-# All Build rule for target.
-CMakeFiles/unity.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/unity.dir/build.make CMakeFiles/unity.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/unity.dir/build.make CMakeFiles/unity.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=7,8 "Built target unity"
-.PHONY : CMakeFiles/unity.dir/all
+# Recursive "all" directory target.
+modules/all: modules/CMakeFiles/cmdproc.dir/all
+.PHONY : modules/all
 
-# Build rule for subdir invocation for target.
-CMakeFiles/unity.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/unity.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles 0
-.PHONY : CMakeFiles/unity.dir/rule
+# Recursive "codegen" directory target.
+modules/codegen: modules/CMakeFiles/cmdproc.dir/codegen
+.PHONY : modules/codegen
 
-# Convenience name for target.
-unity: CMakeFiles/unity.dir/rule
-.PHONY : unity
+# Recursive "preinstall" directory target.
+modules/preinstall:
+.PHONY : modules/preinstall
 
-# codegen rule for target.
-CMakeFiles/unity.dir/codegen:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/unity.dir/build.make CMakeFiles/unity.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=7,8 "Finished codegen for target unity"
-.PHONY : CMakeFiles/unity.dir/codegen
-
-# clean rule for target.
-CMakeFiles/unity.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/unity.dir/build.make CMakeFiles/unity.dir/clean
-.PHONY : CMakeFiles/unity.dir/clean
+# Recursive "clean" directory target.
+modules/clean: modules/CMakeFiles/cmdproc.dir/clean
+.PHONY : modules/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/main.dir
 
 # All Build rule for target.
-CMakeFiles/main.dir/all: CMakeFiles/cmdproc.dir/all
+CMakeFiles/main.dir/all: modules/CMakeFiles/cmdproc.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=3,4 "Built target main"
@@ -187,8 +162,8 @@ CMakeFiles/main.dir/clean:
 # Target rules for target CMakeFiles/tests.dir
 
 # All Build rule for target.
-CMakeFiles/tests.dir/all: CMakeFiles/cmdproc.dir/all
-CMakeFiles/tests.dir/all: CMakeFiles/unity.dir/all
+CMakeFiles/tests.dir/all: modules/CMakeFiles/cmdproc.dir/all
+CMakeFiles/tests.dir/all: Unity/CMakeFiles/unity.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=5,6 "Built target tests"
@@ -215,6 +190,70 @@ CMakeFiles/tests.dir/codegen:
 CMakeFiles/tests.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/clean
 .PHONY : CMakeFiles/tests.dir/clean
+
+#=============================================================================
+# Target rules for target modules/CMakeFiles/cmdproc.dir
+
+# All Build rule for target.
+modules/CMakeFiles/cmdproc.dir/all:
+	$(MAKE) $(MAKESILENT) -f modules/CMakeFiles/cmdproc.dir/build.make modules/CMakeFiles/cmdproc.dir/depend
+	$(MAKE) $(MAKESILENT) -f modules/CMakeFiles/cmdproc.dir/build.make modules/CMakeFiles/cmdproc.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=1,2 "Built target cmdproc"
+.PHONY : modules/CMakeFiles/cmdproc.dir/all
+
+# Build rule for subdir invocation for target.
+modules/CMakeFiles/cmdproc.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 modules/CMakeFiles/cmdproc.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles 0
+.PHONY : modules/CMakeFiles/cmdproc.dir/rule
+
+# Convenience name for target.
+cmdproc: modules/CMakeFiles/cmdproc.dir/rule
+.PHONY : cmdproc
+
+# codegen rule for target.
+modules/CMakeFiles/cmdproc.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f modules/CMakeFiles/cmdproc.dir/build.make modules/CMakeFiles/cmdproc.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=1,2 "Finished codegen for target cmdproc"
+.PHONY : modules/CMakeFiles/cmdproc.dir/codegen
+
+# clean rule for target.
+modules/CMakeFiles/cmdproc.dir/clean:
+	$(MAKE) $(MAKESILENT) -f modules/CMakeFiles/cmdproc.dir/build.make modules/CMakeFiles/cmdproc.dir/clean
+.PHONY : modules/CMakeFiles/cmdproc.dir/clean
+
+#=============================================================================
+# Target rules for target Unity/CMakeFiles/unity.dir
+
+# All Build rule for target.
+Unity/CMakeFiles/unity.dir/all:
+	$(MAKE) $(MAKESILENT) -f Unity/CMakeFiles/unity.dir/build.make Unity/CMakeFiles/unity.dir/depend
+	$(MAKE) $(MAKESILENT) -f Unity/CMakeFiles/unity.dir/build.make Unity/CMakeFiles/unity.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=7,8 "Built target unity"
+.PHONY : Unity/CMakeFiles/unity.dir/all
+
+# Build rule for subdir invocation for target.
+Unity/CMakeFiles/unity.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Unity/CMakeFiles/unity.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles 0
+.PHONY : Unity/CMakeFiles/unity.dir/rule
+
+# Convenience name for target.
+unity: Unity/CMakeFiles/unity.dir/rule
+.PHONY : unity
+
+# codegen rule for target.
+Unity/CMakeFiles/unity.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f Unity/CMakeFiles/unity.dir/build.make Unity/CMakeFiles/unity.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=7,8 "Finished codegen for target unity"
+.PHONY : Unity/CMakeFiles/unity.dir/codegen
+
+# clean rule for target.
+Unity/CMakeFiles/unity.dir/clean:
+	$(MAKE) $(MAKESILENT) -f Unity/CMakeFiles/unity.dir/build.make Unity/CMakeFiles/unity.dir/clean
+.PHONY : Unity/CMakeFiles/unity.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

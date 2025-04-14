@@ -85,6 +85,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\" \"library\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles /home/pramos/Documents/Univ/SETR_Proj2/src/build//CMakeFiles/progress.marks
@@ -117,32 +162,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named cmdproc
-
-# Build rule for target.
-cmdproc: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmdproc
-.PHONY : cmdproc
-
-# fast build rule for target.
-cmdproc/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmdproc.dir/build.make CMakeFiles/cmdproc.dir/build
-.PHONY : cmdproc/fast
-
-#=============================================================================
-# Target rules for targets named unity
-
-# Build rule for target.
-unity: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unity
-.PHONY : unity
-
-# fast build rule for target.
-unity/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/unity.dir/build.make CMakeFiles/unity.dir/build
-.PHONY : unity/fast
-
-#=============================================================================
 # Target rules for targets named main
 
 # Build rule for target.
@@ -168,29 +187,31 @@ tests/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/build
 .PHONY : tests/fast
 
-Unity/src/unity.o: Unity/src/unity.c.o
-.PHONY : Unity/src/unity.o
+#=============================================================================
+# Target rules for targets named cmdproc
 
-# target to build an object file
-Unity/src/unity.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/unity.dir/build.make CMakeFiles/unity.dir/Unity/src/unity.c.o
-.PHONY : Unity/src/unity.c.o
+# Build rule for target.
+cmdproc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmdproc
+.PHONY : cmdproc
 
-Unity/src/unity.i: Unity/src/unity.c.i
-.PHONY : Unity/src/unity.i
+# fast build rule for target.
+cmdproc/fast:
+	$(MAKE) $(MAKESILENT) -f modules/CMakeFiles/cmdproc.dir/build.make modules/CMakeFiles/cmdproc.dir/build
+.PHONY : cmdproc/fast
 
-# target to preprocess a source file
-Unity/src/unity.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/unity.dir/build.make CMakeFiles/unity.dir/Unity/src/unity.c.i
-.PHONY : Unity/src/unity.c.i
+#=============================================================================
+# Target rules for targets named unity
 
-Unity/src/unity.s: Unity/src/unity.c.s
-.PHONY : Unity/src/unity.s
+# Build rule for target.
+unity: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unity
+.PHONY : unity
 
-# target to generate assembly for a file
-Unity/src/unity.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/unity.dir/build.make CMakeFiles/unity.dir/Unity/src/unity.c.s
-.PHONY : Unity/src/unity.c.s
+# fast build rule for target.
+unity/fast:
+	$(MAKE) $(MAKESILENT) -f Unity/CMakeFiles/unity.dir/build.make Unity/CMakeFiles/unity.dir/build
+.PHONY : unity/fast
 
 main.o: main.c.o
 .PHONY : main.o
@@ -215,30 +236,6 @@ main.s: main.c.s
 main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.c.s
 .PHONY : main.c.s
-
-modules/cmdproc.o: modules/cmdproc.c.o
-.PHONY : modules/cmdproc.o
-
-# target to build an object file
-modules/cmdproc.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmdproc.dir/build.make CMakeFiles/cmdproc.dir/modules/cmdproc.c.o
-.PHONY : modules/cmdproc.c.o
-
-modules/cmdproc.i: modules/cmdproc.c.i
-.PHONY : modules/cmdproc.i
-
-# target to preprocess a source file
-modules/cmdproc.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmdproc.dir/build.make CMakeFiles/cmdproc.dir/modules/cmdproc.c.i
-.PHONY : modules/cmdproc.c.i
-
-modules/cmdproc.s: modules/cmdproc.c.s
-.PHONY : modules/cmdproc.s
-
-# target to generate assembly for a file
-modules/cmdproc.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmdproc.dir/build.make CMakeFiles/cmdproc.dir/modules/cmdproc.c.s
-.PHONY : modules/cmdproc.c.s
 
 tests.o: tests.c.o
 .PHONY : tests.o
@@ -271,20 +268,18 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... cmdproc"
 	@echo "... main"
 	@echo "... tests"
 	@echo "... unity"
-	@echo "... Unity/src/unity.o"
-	@echo "... Unity/src/unity.i"
-	@echo "... Unity/src/unity.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... modules/cmdproc.o"
-	@echo "... modules/cmdproc.i"
-	@echo "... modules/cmdproc.s"
 	@echo "... tests.o"
 	@echo "... tests.i"
 	@echo "... tests.s"

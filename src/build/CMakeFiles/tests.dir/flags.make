@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = -I/home/pramos/Documents/Univ/SETR_Proj2/src/src/modules
+C_INCLUDES = -I/home/pramos/Documents/Univ/SETR_Proj2/src/modules -I/home/pramos/Documents/Univ/SETR_Proj2/src/modules/. -I/home/pramos/Documents/Univ/SETR_Proj2/src/Unity/src -I/home/pramos/Documents/Univ/SETR_Proj2/src/build/Unity
 
 C_FLAGS = -std=gnu99
 

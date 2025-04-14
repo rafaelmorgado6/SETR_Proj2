@@ -49,5 +49,5 @@ main
  /usr/lib/libc.so.6
  /usr/lib/libc_nonshared.a
  /home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles/main.dir/main.c.o
- /home/pramos/Documents/Univ/SETR_Proj2/src/build/libcmdproc.a
+ /home/pramos/Documents/Univ/SETR_Proj2/src/build/modules/libcmdproc.a
 

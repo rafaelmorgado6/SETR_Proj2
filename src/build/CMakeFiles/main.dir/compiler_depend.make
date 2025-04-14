@@ -47,10 +47,8 @@ main: /usr/lib/Scrt1.o \
   /usr/lib/libc.so.6 \
   /usr/lib/libc_nonshared.a \
   CMakeFiles/main.dir/main.c.o \
-  libcmdproc.a
+  modules/libcmdproc.a
 
-
-libcmdproc.a:
 
 CMakeFiles/main.dir/main.c.o:
 
@@ -117,6 +115,8 @@ CMakeFiles/main.dir/main.c.o:
 /usr/include/bits/types/__fpos64_t.h:
 
 /usr/include/features-time64.h:
+
+modules/libcmdproc.a:
 
 /usr/include/bits/types/struct_FILE.h:
 

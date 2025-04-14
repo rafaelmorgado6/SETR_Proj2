@@ -73,13 +73,9 @@ tests: /usr/lib/Scrt1.o \
   /usr/lib/libc.so.6 \
   /usr/lib/libc_nonshared.a \
   CMakeFiles/tests.dir/tests.c.o \
-  libcmdproc.a \
-  libunity.a
+  Unity/libunity.a \
+  modules/libcmdproc.a
 
-
-libunity.a:
-
-libcmdproc.a:
 
 CMakeFiles/tests.dir/tests.c.o:
 
@@ -104,6 +100,8 @@ CMakeFiles/tests.dir/tests.c.o:
 /usr/include/bits/wchar.h:
 
 /usr/include/bits/stdint-intn.h:
+
+Unity/libunity.a:
 
 /usr/include/stdint.h:
 
@@ -186,6 +184,8 @@ CMakeFiles/tests.dir/tests.c.o:
 /usr/include/bits/local_lim.h:
 
 /usr/include/bits/types/__mbstate_t.h:
+
+modules/libcmdproc.a:
 
 /usr/include/bits/types/__sigset_t.h:
 

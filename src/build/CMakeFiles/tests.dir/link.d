@@ -3,8 +3,8 @@ tests: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/../../../../lib/crti.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/crtbeginS.o \
   CMakeFiles/tests.dir/tests.c.o \
-  libcmdproc.a \
-  libunity.a \
+  modules/libcmdproc.a \
+  Unity/libunity.a \
   /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/libgcc.a \
   /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/../../../../lib/libgcc_s.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/../../../../lib/libgcc_s.so \
@@ -35,9 +35,9 @@ tests: \
 
 CMakeFiles/tests.dir/tests.c.o:
 
-libcmdproc.a:
+modules/libcmdproc.a:
 
-libunity.a:
+Unity/libunity.a:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/libgcc.a:
 

@@ -96,8 +96,8 @@ tests_EXTERNAL_OBJECTS =
 tests: CMakeFiles/tests.dir/tests.c.o
 tests: CMakeFiles/tests.dir/build.make
 tests: CMakeFiles/tests.dir/compiler_depend.ts
-tests: libcmdproc.a
-tests: libunity.a
+tests: modules/libcmdproc.a
+tests: Unity/libunity.a
 tests: CMakeFiles/tests.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/pramos/Documents/Univ/SETR_Proj2/src/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable tests"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/tests.dir/link.txt --verbose=$(VERBOSE)
